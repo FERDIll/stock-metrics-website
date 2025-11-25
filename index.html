@@ -634,41 +634,43 @@
 
 
             
-<!-- Right: Search card with working JS -->
-<div>
-<div class="search-card">
-  <div class="search-row">
-  <div class="search-input-wrapper">
-    <input
-      id="searchInput"
-      class="search-input"
-      type="text"
-      placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
-      oninput="updateSuggestions()"
-    />
-    <div id="searchResult" class="suggestion-box" style="display:none;"></div>
-  </div>
-  <button class="search-btn" onclick="searchStock()">Search</button>
-</div>
+        <!-- Right: Search card with working JS -->
+        <div>
+          <div class="search-card">
+            <div class="search-label">Ticker search</div>
 
+            <div class="search-row">
+              <div class="search-input-wrapper">
+                <input
+                  id="searchInput"
+                  class="search-input"
+                  type="text"
+                  placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
+                  oninput="updateSuggestions()"
+                />
+                <div id="searchResult" class="suggestion-box" style="display:none;"></div>
+              </div>
+              <button class="search-btn" onclick="searchStock()">Search</button>
+            </div>
 
-    <div class="tag-row">
-      <span class="tag">AAPL</span>
-      <span class="tag">TSLA</span>
-      <span class="tag">NVDA</span>
-      <span class="tag">AMZN</span>
-      <span class="tag">META</span>
-      <span class="tag">MSFT</span>
-    </div>
+            <div class="tag-row">
+              <span class="tag">AAPL</span>
+              <span class="tag">TSLA</span>
+              <span class="tag">NVDA</span>
+              <span class="tag">AMZN</span>
+              <span class="tag">META</span>
+              <span class="tag">MSFT</span>
+            </div>
 
-       <div class="search-callout">
-      This search checks a static built-in list.  
-      Later connect this to real financial data APIs.
-    </div>
-  </div>        <!-- closes .search-card -->
-</div>          <!-- closes right-hand column -->
-</div>          <!-- end .hero-grid -->
-</section>      <!-- end .hero -->
+            <div class="search-callout">
+              This search checks a static built-in list.  
+              Later connect this to real financial data APIs.
+            </div>
+          </div>
+        </div>
+      </div> <!-- end .hero-grid -->
+    </section> <!-- end .hero -->
+
 
         
         <!-- HOW IT WORKS -->
