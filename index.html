@@ -637,8 +637,8 @@
         <!-- Right: Search card with working JS -->
         <div>
           <div class="search-card">
-            <div class="search-label">Ticker search</div>
-
+             <div class="search-label">Ticker search</div>
+            
             <div class="search-row">
               <div class="search-input-wrapper">
                 <input
@@ -647,7 +647,8 @@
                   type="text"
                   placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
                   oninput="updateSuggestions()"
-                />
+                  onkeydown="handleKey(event)"
+                  />
                 <div id="searchResult" class="suggestion-box" style="display:none;"></div>
               </div>
               <button class="search-btn" onclick="searchStock()">Search</button>
@@ -870,9 +871,48 @@
   function searchStock() {
     updateSuggestions();
   }
+     function handleKey(event) {                                  // Key enter thing 
+    if (event.key !== "Enter") return;
+
+    event.preventDefault();
+
+    const inputEl = document.getElementById("searchInput");
+    const value = inputEl.value.trim().toUpperCase();
+    const resultBox = document.getElementById("searchResult");
+
+    if (!value) return;
+
+    // 1) exact ticker match
+    if (STOCKS[value]) {
+      inputEl.value = value;
+      resultBox.style.display = "none";
+      window.location.href = `${value}.html`;
+      return;
+    }
+
+    // 2) otherwise: use first ticker that starts with input
+    const matches = Object.keys(STOCKS).filter(ticker =>
+      ticker.startsWith(value)
+    );
+
+    if (matches.length > 0) {
+      const best = matches[0];
+      inputEl.value = best;
+      resultBox.style.display = "none";
+      window.location.href = `${best}.html`;
+      return;
+    }
+
+    // 3) no match at all
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
+      <span style="color: #f87171; font-weight:600;">
+        No matches for "${value}"
+      </span>
+    `;
+  }
+
 </script>
 </body>
 </html>
 
-</body>
-</html>
