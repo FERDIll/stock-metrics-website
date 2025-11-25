@@ -554,37 +554,41 @@
               </p>
             </div>
 
-            <!-- Right: Search card UI (future logic) -->
-            <div>
-              <div class="search-card">
-                <div class="search-label">Ticker search (UI only for now)</div>
-                <div class="search-row">
-                  <input
-                    class="search-input"
-                    type="text"
-                    placeholder="Search by ticker (AAPL, TSLA…) — coming soon"
-                    disabled
-                  />
-                  <button class="search-btn" disabled>Search</button>
-                </div>
-                <div class="search-status">
-                  Search, live data, and per-ticker pages will be added later. For now, use this as a design + structure sandbox.
-                </div>
-                <div class="tag-row">
-                  <span class="tag tag--primary">Calculator + explanation engine</span>
-                  <span class="tag">Visible formulas</span>
-                  <span class="tag">Static demo</span>
-                  <span class="tag">Data layer: coming later</span>
-                </div>
-                <div class="search-callout">
-                  Roadmap idea: type a ticker → fetch financials → compute metrics → show both the
-                  raw inputs and the exact math behind each number.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+<!-- Right: Search card with working JS -->
+<div>
+  <div class="search-card">
+    <div class="search-label">Ticker search</div>
 
+    <div class="search-row">
+      <input
+        id="searchInput"
+        class="search-input"
+        type="text"
+        placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
+      />
+      <button class="search-btn" onclick="searchStock()">Search</button>
+    </div>
+
+    <div id="searchResult" class="search-status" style="margin-top: 0.6rem;">
+      Enter a ticker symbol to begin.
+    </div>
+
+    <div class="tag-row">
+      <span class="tag tag--primary">Static prototype</span>
+      <span class="tag">AAPL</span>
+      <span class="tag">TSLA</span>
+      <span class="tag">NVDA</span>
+      <span class="tag">AMZN</span>
+      <span class="tag">META</span>
+      <span class="tag">MSFT</span>
+    </div>
+
+    <div class="search-callout">
+      This search checks a static built-in list.  
+      Later connect this to real financial data APIs.
+    </div>
+  </div>
+</div>
         <!-- HOW IT WORKS -->
         <section id="how-it-works" class="section">
           <div class="section-header">
@@ -725,5 +729,47 @@
       </div>
     </footer>
   </div>
+  <script>
+  // Static list of supported tickers
+  const STOCKS = {
+    "AAPL": "Apple Inc.",
+    "TSLA": "Tesla Inc.",
+    "NVDA": "NVIDIA Corp.",
+    "AMZN": "Amazon.com Inc.",
+    "MSFT": "Microsoft Corp.",
+    "META": "Meta Platforms Inc.",
+    "GOOGL": "Alphabet Class A"
+  };
+
+  function searchStock() {
+    const input = document.getElementById("searchInput").value.trim().toUpperCase();
+    const resultBox = document.getElementById("searchResult");
+
+    if (input === "") {
+      resultBox.innerHTML = "Please enter a ticker symbol.";
+      return;
+    }
+
+    if (STOCKS[input]) {
+      resultBox.innerHTML = `
+        <span style="color: var(--accent); font-weight: 600;">
+          ${input} — ${STOCKS[input]}
+        </span>
+        <br>
+        Stock found in database.  
+        <br>
+        Future step: load metrics, formulas, and analysis.
+      `;
+    } else {
+      resultBox.innerHTML = `
+        <span style="color: #f87171; font-weight: 600;">
+          ${input}
+        </span> not found in the static list.
+        <br>
+        Add this ticker manually later for testing.
+      `;
+    }
+  }
+</script>
 </body>
 </html>
