@@ -570,6 +570,7 @@
         class="search-input"
         type="text"
         placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
+        oninput="updateSuggestions()"
       />
       <button class="search-btn" onclick="searchStock()">Search</button>
     </div>
@@ -738,56 +739,59 @@
     </footer>
   </div>
   <script>
-  // Static list of supported tickers
-  const STOCKS = {
-    "AAPL": "Apple Inc.",
-    "TSLA": "Tesla Inc.",
-    "NVDA": "NVIDIA Corp.",
-    "AMZN": "Amazon.com Inc.",
-    "MSFT": "Microsoft Corp.",
-    "META": "Meta Platforms Inc.",
-    "GOOGL": "Alphabet Class A"
-  };
+    // Static list of supported tickers
+    const STOCKS = {
+      "AAPL": "Apple Inc.",
+      "TSLA": "Tesla Inc.",
+      "NVDA": "NVIDIA Corp.",
+      "AMZN": "Amazon.com Inc.",
+      "MSFT": "Microsoft Corp.",
+      "META": "Meta Platforms Inc.",
+      "GOOGL": "Alphabet Class A"
+    };
 
-    
+    // Runs on every key press (live suggestions)
+    function updateSuggestions() {
+      const input = document.getElementById("searchInput").value.trim().toUpperCase();
+      const resultBox = document.getElementById("searchResult");
 
-function searchStock() {
-  const input = document.getElementById("searchInput").value.trim().toUpperCase();
-  const resultBox = document.getElementById("searchResult");
+      if (input === "") {
+        resultBox.innerHTML = "Enter a ticker symbol to see suggestions.";
+        return;
+      }
 
-  if (input === "") {
-    resultBox.innerHTML = "Please enter a ticker symbol.";
-    return;
-  }
+      // Find tickers starting with the input
+      const matches = Object.keys(STOCKS).filter(ticker =>
+        ticker.startsWith(input)
+      );
 
-  // Find tickers starting with the input
-  const matches = Object.keys(STOCKS).filter(ticker =>
-    ticker.startsWith(input)
-  );
+      if (matches.length === 0) {
+        resultBox.innerHTML = `
+          <span style="color: #f87171; font-weight: 600;">
+            No tickers found starting with "${input}".
+          </span>
+        `;
+        return;
+      }
 
-  if (matches.length === 0) {
-    resultBox.innerHTML = `
-      <span style="color: #f87171; font-weight: 600;">
-        No tickers found starting with "${input}".
-      </span>
-    `;
-    return;
-  }
+      const list = matches
+        .map(ticker => `<li>${ticker} — ${STOCKS[ticker]}</li>`)
+        .join("");
 
-  // Build result list
-  const list = matches
-    .map(ticker => `<li>${ticker} — ${STOCKS[ticker]}</li>`)
-    .join("");
+      resultBox.innerHTML = `
+        <span style="color: var(--accent); font-weight: 600;">
+          Suggestions (${matches.length}):
+        </span>
+        <ul style="margin-top: 0.4rem; padding-left: 1rem; line-height: 1.4;">
+          ${list}
+        </ul>
+      `;
+    }
 
-  resultBox.innerHTML = `
-    <span style="color: var(--accent); font-weight: 600;">
-      Found ${matches.length} result(s):
-    </span>
-    <ul style="margin-top: 0.4rem; padding-left: 1rem; line-height: 1.4;">
-      ${list}
-    </ul>
-  `;
-}
+    // Button uses the same logic (just re-runs suggestions)
+    function searchStock() {
+      updateSuggestions();
+    }
   </script>
 </body>
 </html>
