@@ -636,7 +636,8 @@
             
 <!-- Right: Search card with working JS -->
 <div>
- <div class="search-row">
+<div class="search-card">
+  <div class="search-row">
   <div class="search-input-wrapper">
     <input
       id="searchInput"
@@ -823,55 +824,53 @@
   };
 
   // Runs on every key press (live suggestions)
-function updateSuggestions() {
-  const input = document.getElementById("searchInput").value.trim().toUpperCase();
-  const resultBox = document.getElementById("searchResult");
+  function updateSuggestions() {
+    const input = document.getElementById("searchInput").value.trim().toUpperCase();
+    const resultBox = document.getElementById("searchResult");
 
-  if (input === "") {
-    resultBox.style.display = "none";
-    resultBox.innerHTML = "";
-    return;
-  }
+    if (input === "") {
+      resultBox.style.display = "none";
+      resultBox.innerHTML = "";
+      return;
+    }
 
-  const matches = Object.keys(STOCKS).filter(ticker =>
-    ticker.startsWith(input)
-  );
+    const matches = Object.keys(STOCKS).filter(ticker =>
+      ticker.startsWith(input)
+    );
 
-  if (matches.length === 0) {
+    if (matches.length === 0) {
+      resultBox.style.display = "block";
+      resultBox.innerHTML = `
+        <span style="color: #f87171; font-weight:600;">No matches for "${input}"</span>
+      `;
+      return;
+    }
+
+    const list = matches
+      .map(
+        ticker => `
+          <li>
+            <a href="${ticker}.html" class="suggestion-link">
+              <span class="suggestion-ticker">${ticker}</span>
+              <span class="suggestion-name">— ${STOCKS[ticker]}</span>
+            </a>
+          </li>
+        `
+      )
+      .join("");
+
     resultBox.style.display = "block";
     resultBox.innerHTML = `
-      <span style="color: #f87171; font-weight:600;">No matches for "${input}"</span>
+      <ul>${list}</ul>
     `;
-    return;
-  }
-
-  const list = matches
-    .map(
-      ticker => `
-       <li>
-  <a href="${ticker}.html" class="suggestion-link">
-    <span class="suggestion-ticker">${ticker}</span>
-    <span class="suggestion-name">— ${STOCKS[ticker]}</span>
-  </a>
-</li>
-      `
-    )
-    .join("");
-
-  resultBox.style.display = "block";
-  resultBox.innerHTML = `
-    <ul>${list}</ul>
-  `;
-}
-
-  function yelectTicker(ticker) {
-    document.getElementById("yearchInput").value = ticker;
-    document.getElementById("yearchReyult").ytyle.display = "none";
   }
 
   function searchStock() {
     updateSuggestions();
   }
 </script>
+</body>
+</html>
+
 </body>
 </html>
