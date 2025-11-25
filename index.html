@@ -495,17 +495,33 @@
       text-underline-offset: 3px;
     }
 
-      /* Autocomplete dropdown */
+.search-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+/* Autocomplete dropdown */
 .suggestion-box {
-  margin-top: 0.3rem;
+  position: absolute;
+  top: 100%;              /* directly under the input */
+  left: 0;
+  right: 0;
+  margin-top: 0.25rem;
   background: rgba(15, 23, 42, 0.98);
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 0.75rem;
-  padding: 0.4rem 0.6rem;
+  padding: 0.35rem 0.4rem;
   backdrop-filter: blur(8px);
   max-height: 180px;
   overflow-y: auto;
   box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+  font-size: 0.82rem;
 }
 
 .suggestion-box ul {
@@ -515,7 +531,10 @@
 }
 
 .suggestion-box li {
-  padding: 0.35rem 0.4rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.3rem 0.35rem;
   border-radius: 0.4rem;
   cursor: pointer;
   transition: background 0.15s;
@@ -524,6 +543,19 @@
 .suggestion-box li:hover {
   background: rgba(56, 189, 248, 0.15);
 }
+
+/* Font styling inside suggestions */
+.suggestion-ticker {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.suggestion-name {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
 
     @media (max-width: 640px) {
       .footer-inner {
@@ -591,21 +623,20 @@
             
 <!-- Right: Search card with working JS -->
 <div>
-  <div class="search-card">
-    <div class="search-label">Ticker search</div>
+ <div class="search-row">
+  <div class="search-input-wrapper">
+    <input
+      id="searchInput"
+      class="search-input"
+      type="text"
+      placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
+      oninput="updateSuggestions()"
+    />
+    <div id="searchResult" class="suggestion-box" style="display:none;"></div>
+  </div>
+  <button class="search-btn" onclick="searchStock()">Search</button>
+</div>
 
-    <div class="search-row">
-      <input
-        id="searchInput"
-        class="search-input"
-        type="text"
-        placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
-        oninput="updateSuggestions()"
-      />
-      <button class="search-btn" onclick="searchStock()">Search</button>
-    </div>
-
-<div id="searchResult" class="suggestion-box" style="display:none;"></div>
 
     <div class="tag-row">
       <span class="tag">AAPL</span>
@@ -779,37 +810,44 @@
   };
 
   // Runs on every key press (live suggestions)
-  function updateSuggestions() {
-    const input = document.getElementById("searchInput").value.trim().toUpperCase();
-    const resultBox = document.getElementById("searchResult");
+function updateSuggestions() {
+  const input = document.getElementById("searchInput").value.trim().toUpperCase();
+  const resultBox = document.getElementById("searchResult");
 
-    if (input === "") {
-      resultBox.style.display = "none";
-      resultBox.innerHTML = "";
-      return;
-    }
+  if (input === "") {
+    resultBox.style.display = "none";
+    resultBox.innerHTML = "";
+    return;
+  }
 
-    const matches = Object.keys(STOCKS).filter(ticker =>
-      ticker.startsWith(input)
-    );
+  const matches = Object.keys(STOCKS).filter(ticker =>
+    ticker.startsWith(input)
+  );
 
-    if (matches.length === 0) {
-      resultBox.style.display = "block";
-      resultBox.innerHTML = `
-        <span style="color: #f87171; font-weight:600;">No matches for "${input}"</span>
-      `;
-      return;
-    }
-
-    const list = matches
-      .map(ticker => `<li onclick="selectTicker('${ticker}')">${ticker} — ${STOCKS[ticker]}</li>`)
-      .join("");
-
+  if (matches.length === 0) {
     resultBox.style.display = "block";
     resultBox.innerHTML = `
-      <ul>${list}</ul>
+      <span style="color: #f87171; font-weight:600;">No matches for "${input}"</span>
     `;
+    return;
   }
+
+  const list = matches
+    .map(
+      ticker => `
+        <li onclick="selectTicker('${ticker}')">
+          <span class="suggestion-ticker">${ticker}</span>
+          <span class="suggestion-name">— ${STOCKS[ticker]}</span>
+        </li>
+      `
+    )
+    .join("");
+
+  resultBox.style.display = "block";
+  resultBox.innerHTML = `
+    <ul>${list}</ul>
+  `;
+}
 
   function selectTicker(ticker) {
     document.getElementById("searchInput").value = ticker;
