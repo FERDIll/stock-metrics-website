@@ -253,18 +253,20 @@
       color: rgba(148, 163, 184, 0.85);
     }
 
+
     .search-btn {
       padding: 0.55rem 1.0rem;
-      border-radius: 999px;
-      border: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      cursor: not-allowed;
-      background: rgba(148, 163, 184, 0.28);
-      color: rgba(249, 250, 251, 0.75);
-    }
+  border-radius: 999px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;            /* was: not-allowed */
+  background: var(--accent);  /* was grey */
+  color: #020617;             /* dark text on bright button */
+}
+
 
     .search-status {
       font-size: 0.8rem;
@@ -590,7 +592,9 @@
       Later connect this to real financial data APIs.
     </div>
   </div>
-</div>
+            </div> <!-- end .hero-grid -->
+        </section> <!-- end .hero -->
+        
         <!-- HOW IT WORKS -->
         <section id="how-it-works" class="section">
           <div class="section-header">
@@ -782,6 +786,6 @@ function searchStock() {
     </ul>
   `;
 }
-
+  </script>
 </body>
 </html>
