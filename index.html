@@ -555,6 +555,19 @@
   color: var(--text-muted);
   font-size: 0.78rem;
 }
+  .suggestion-link {
+  display: flex;
+  gap: 0.3rem;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.suggestion-link:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-radius: 0.4rem;
+}
+
 
 
     @media (max-width: 640px) {
@@ -835,10 +848,12 @@ function updateSuggestions() {
   const list = matches
     .map(
       ticker => `
-        <li onclick="selectTicker('${ticker}')">
-          <span class="suggestion-ticker">${ticker}</span>
-          <span class="suggestion-name">— ${STOCKS[ticker]}</span>
-        </li>
+       <li>
+  <a href="${ticker}.html" class="suggestion-link">
+    <span class="suggestion-ticker">${ticker}</span>
+    <span class="suggestion-name">— ${STOCKS[ticker]}</span>
+  </a>
+</li>
       `
     )
     .join("");
@@ -849,9 +864,9 @@ function updateSuggestions() {
   `;
 }
 
-  function selectTicker(ticker) {
-    document.getElementById("searchInput").value = ticker;
-    document.getElementById("searchResult").style.display = "none";
+  function yelectTicker(ticker) {
+    document.getElementById("yearchInput").value = ticker;
+    document.getElementById("yearchReyult").ytyle.display = "none";
   }
 
   function searchStock() {
