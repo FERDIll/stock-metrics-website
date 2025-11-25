@@ -1,11 +1,729 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Test page</title>
-  </head>
-  <body style="background: #000000; color: #00ff00; font-size: 32px;">
-    <h1>IT WORKS 🎯</h1>
-    <p>If you can see this, GitHub Pages and index.html are set up correctly.</p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Transparent Metrics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050814;
+      --bg-elevated: #0b1020;
+      --bg-soft: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --danger: #f97373;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 30%, #020617 60%, #000000 100%);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    /* Header */
+
+    header {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      backdrop-filter: blur(16px);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 60%);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    .logo-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      background: radial-gradient(circle at 30% 20%, #38bdf8, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #0b1120;
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.5);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    nav a {
+      position: relative;
+      padding-bottom: 0.1rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.15rem;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.18s ease;
+    }
+
+    nav a:hover {
+      color: var(--text-main);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero */
+
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      padding-top: 2.5rem;
+      padding-bottom: 2.75rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 840px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.15rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 70%);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3.1vw, 2.6rem);
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 32rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-bullets {
+      margin: 0.75rem 0 1.25rem;
+      list-style: none;
+    }
+
+    .hero-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 0.3rem;
+    }
+
+    .bullet-dot {
+      margin-top: 0.32rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      flex-shrink: 0;
+    }
+
+    .hero-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      opacity: 0.9;
+    }
+
+    /* Search card */
+
+    .search-card {
+      border-radius: 1.25rem;
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.2), transparent 60%), var(--bg-elevated);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      padding: 1.4rem 1.35rem;
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.8);
+    }
+
+    .search-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: rgba(148, 163, 184, 0.85);
+    }
+
+    .search-btn {
+      padding: 0.55rem 1.0rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      cursor: not-allowed;
+      background: rgba(148, 163, 184, 0.28);
+      color: rgba(249, 250, 251, 0.75);
+    }
+
+    .search-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .tag--primary {
+      border-color: rgba(56, 189, 248, 0.85);
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .search-callout {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-radius: 0.8rem;
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      padding: 0.6rem 0.7rem;
+      background: rgba(15, 23, 42, 0.7);
+      margin-top: 0.75rem;
+    }
+
+    /* Sections */
+
+    .section {
+      padding: 2.0rem 0 0.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.1rem;
+      gap: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.0rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* How it works cards */
+
+    .hiw-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .hiw-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+    }
+
+    .hiw-card {
+      border-radius: 1rem;
+      padding: 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hiw-badge {
+      font-size: 0.75rem;
+      margin-bottom: 0.4rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .hiw-title {
+      font-size: 0.95rem;
+      font-weight: 550;
+      margin-bottom: 0.35rem;
+    }
+
+    .hiw-text {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    /* Example section */
+
+    .example-card {
+      border-radius: 1.1rem;
+      padding: 1rem 1.05rem;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 60%), var(--bg-elevated);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      margin-bottom: 1.0rem;
+    }
+
+    .example-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.6rem;
+      gap: 0.5rem;
+    }
+
+    .example-title {
+      font-size: 0.95rem;
+      font-weight: 550;
+    }
+
+    .example-tag {
+      font-size: 0.78rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.65);
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .example-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 0.25rem;
+    }
+
+    .example-table th,
+    .example-table td {
+      padding: 0.35rem 0.4rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .example-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .example-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .example-footnote {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* About / philosophy */
+
+    .about {
+      border-radius: 1.1rem;
+      padding: 1rem 1.05rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .about p + p {
+      margin-top: 0.6rem;
+    }
+
+    .disclaimer {
+      font-size: 0.75rem;
+      color: rgba(148, 163, 184, 0.85);
+      margin-top: 0.8rem;
+    }
+
+    .disclaimer span {
+      color: var(--danger);
+      font-weight: 500;
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+      margin-top: 2.4rem;
+      padding: 0.9rem 0;
+      background: #020617;
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 3px;
+    }
+
+    @media (max-width: 640px) {
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- HEADER -->
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <div class="logo-icon">TM</div>
+          <span>Transparent Metrics</span>
+        </div>
+        <nav>
+          <a href="#top">Home</a>
+          <a href="#how-it-works">How it works</a>
+          <a href="#example">Example</a>
+          <a href="#about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main id="top">
+      <div class="container">
+
+        <!-- HERO -->
+        <section class="hero">
+          <div class="hero-grid">
+            <!-- Left: Intro text -->
+            <div>
+              <div class="pill">
+                <span class="pill-dot"></span>
+                Live prototype – static demo, data layer coming later
+              </div>
+
+              <h1 class="hero-title">Transparent Metrics</h1>
+              <p class="hero-subtitle">
+                “See every stock metric, formula, and data source. No black boxes.”
+              </p>
+
+              <p class="hero-note">
+                This isn’t meant to be just another screener. The goal is a calculator + explanation engine where you actually see:
+              </p>
+
+              <ul class="hero-bullets">
+                <li><span class="bullet-dot"></span><span>the number</span></li>
+                <li><span class="bullet-dot"></span><span>the exact formula</span></li>
+                <li><span class="bullet-dot"></span><span>what each input means</span></li>
+                <li><span class="bullet-dot"></span><span>where the data came from</span></li>
+              </ul>
+
+              <p class="hero-note">
+                The current version is a structured prototype: layout first, real-time data and search later.
+              </p>
+            </div>
+
+            <!-- Right: Search card UI (future logic) -->
+            <div>
+              <div class="search-card">
+                <div class="search-label">Ticker search (UI only for now)</div>
+                <div class="search-row">
+                  <input
+                    class="search-input"
+                    type="text"
+                    placeholder="Search by ticker (AAPL, TSLA…) — coming soon"
+                    disabled
+                  />
+                  <button class="search-btn" disabled>Search</button>
+                </div>
+                <div class="search-status">
+                  Search, live data, and per-ticker pages will be added later. For now, use this as a design + structure sandbox.
+                </div>
+                <div class="tag-row">
+                  <span class="tag tag--primary">Calculator + explanation engine</span>
+                  <span class="tag">Visible formulas</span>
+                  <span class="tag">Static demo</span>
+                  <span class="tag">Data layer: coming later</span>
+                </div>
+                <div class="search-callout">
+                  Roadmap idea: type a ticker → fetch financials → compute metrics → show both the
+                  raw inputs and the exact math behind each number.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section id="how-it-works" class="section">
+          <div class="section-header">
+            <h2 class="section-title">How it works (concept)</h2>
+            <p class="section-subtitle">
+              The long-term structure: not just what a metric is, but how it is built.
+            </p>
+          </div>
+
+          <div class="hiw-grid">
+            <article class="hiw-card">
+              <div class="hiw-badge">01 · Select</div>
+              <h3 class="hiw-title">Pick a stock or use a sample</h3>
+              <p class="hiw-text">
+                In future iterations: search by ticker, or choose from a list of example companies.
+                The engine pulls the core inputs (price, earnings, cash flow, equity, etc.).
+              </p>
+            </article>
+
+            <article class="hiw-card">
+              <div class="hiw-badge">02 · Compute</div>
+              <h3 class="hiw-title">Calculate core metrics</h3>
+              <p class="hiw-text">
+                For each stock, core metrics are computed: P/E, FCF yield, ROE, margins, growth
+                rates, and more — always with the exact formula shown next to the value.
+              </p>
+            </article>
+
+            <article class="hiw-card">
+              <div class="hiw-badge">03 · Explain</div>
+              <h3 class="hiw-title">Show the logic, not just the output</h3>
+              <p class="hiw-text">
+                Every metric is accompanied by plain-language context: which inputs were used,
+                how they were sourced, when the metric is useful, and when it becomes misleading.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- EXAMPLE -->
+        <section id="example" class="section">
+          <div class="section-header">
+            <h2 class="section-title">Static example (placeholder data)</h2>
+            <p class="section-subtitle">
+              Simple mock example to show how numbers + formulas can sit side-by-side.
+            </p>
+          </div>
+
+          <div class="example-card">
+            <div class="example-header">
+              <div>
+                <div class="example-title">Example: P/E breakdown for a sample stock</div>
+                <div class="section-subtitle">
+                  This is static placeholder data, purely to visualize the structure.
+                </div>
+              </div>
+              <span class="example-tag">Sample only</span>
+            </div>
+
+            <table class="example-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Formula</th>
+                  <th>Inputs (conceptual)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>EPS (ttm)</td>
+                  <td>6.12</td>
+                  <td>Net income ÷ shares outstanding</td>
+                  <td>Net income (last 12m), basic shares</td>
+                </tr>
+                <tr>
+                  <td>Share price</td>
+                  <td>190.00</td>
+                  <td>Latest close</td>
+                  <td>Market price, pulled from quotes API</td>
+                </tr>
+                <tr>
+                  <td>P/E ratio</td>
+                  <td>31.0×</td>
+                  <td>Price ÷ EPS</td>
+                  <td>190.00 ÷ 6.12</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p class="example-footnote">
+              In the real version, each row would be backed by live or regularly updated data,
+              linked to filings or APIs. The point of this site is that the math is always visible,
+              not hidden behind a single number.
+            </p>
+          </div>
+        </section>
+
+        <!-- ABOUT / PHILOSOPHY -->
+        <section id="about" class="section">
+          <div class="section-header">
+            <h2 class="section-title">Why this exists</h2>
+          </div>
+
+          <div class="about">
+            <p>
+              The goal of Transparent Metrics is to build something different from a typical
+              “type a ticker, get a number” website. Most platforms show P/E, ROE, or growth
+              rates with no real transparency. This project is built around the opposite idea:
+              the formulas and inputs are the core product, not an afterthought.
+            </p>
+            <p>
+              Long-term, the plan is to turn this into a calculator + explanation engine for
+              investors who actually want to understand what they are looking at: how each metric
+              is constructed, where the numbers come from, and when a metric can mislead you.
+            </p>
+            <p class="disclaimer">
+              <span>Important:</span> Everything here is for educational and informational purposes
+              only. It is not financial, investment, tax, or legal advice. Always do your own
+              research and consider consulting a qualified professional before making investment
+              decisions.
+            </p>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div>© 2025 Transparent Metrics. All rights reserved.</div>
+        <div class="footer-links">
+          <a href="#about">About</a>
+          <a href="#how-it-works">Concept</a>
+          <a href="#example">Example</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
 </html>
