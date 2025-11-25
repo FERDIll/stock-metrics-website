@@ -500,6 +500,37 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      
+      /* Autocomplete dropdown */
+.suggestion-box {
+  margin-top: 0.3rem;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  backdrop-filter: blur(8px);
+  max-height: 180px;
+  overflow-y: auto;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+}
+
+.suggestion-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.suggestion-box li {
+  padding: 0.35rem 0.4rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.suggestion-box li:hover {
+  background: rgba(56, 189, 248, 0.15);
+}
+
     }
   </style>
 </head>
@@ -575,9 +606,7 @@
       <button class="search-btn" onclick="searchStock()">Search</button>
     </div>
 
-    <div id="searchResult" class="search-status" style="margin-top: 0.6rem;">
-      Enter a ticker symbol to begin.
-    </div>
+<div id="searchResult" class="suggestion-box" style="display:none;"></div>
 
     <div class="tag-row">
       <span class="tag">AAPL</span>
@@ -738,60 +767,59 @@
       </div>
     </footer>
   </div>
-  <script>
-    // Static list of supported tickers
-    const STOCKS = {
-      "AAPL": "Apple Inc.",
-      "TSLA": "Tesla Inc.",
-      "NVDA": "NVIDIA Corp.",
-      "AMZN": "Amazon.com Inc.",
-      "MSFT": "Microsoft Corp.",
-      "META": "Meta Platforms Inc.",
-      "GOOGL": "Alphabet Class A"
-    };
+ <script>
+  // Static list of supported tickers
+  const STOCKS = {
+    "AAPL": "Apple Inc.",
+    "TSLA": "Tesla Inc.",
+    "NVDA": "NVIDIA Corp.",
+    "AMZN": "Amazon.com Inc.",
+    "MSFT": "Microsoft Corp.",
+    "META": "Meta Platforms Inc.",
+    "GOOGL": "Alphabet Class A"
+  };
 
-    // Runs on every key press (live suggestions)
-    function updateSuggestions() {
-      const input = document.getElementById("searchInput").value.trim().toUpperCase();
-      const resultBox = document.getElementById("searchResult");
+  // Runs on every key press (live suggestions)
+  function updateSuggestions() {
+    const input = document.getElementById("searchInput").value.trim().toUpperCase();
+    const resultBox = document.getElementById("searchResult");
 
-      if (input === "") {
-        resultBox.innerHTML = "Enter a ticker symbol to see suggestions.";
-        return;
-      }
+    if (input === "") {
+      resultBox.style.display = "none";
+      resultBox.innerHTML = "";
+      return;
+    }
 
-      // Find tickers starting with the input
-      const matches = Object.keys(STOCKS).filter(ticker =>
-        ticker.startsWith(input)
-      );
+    const matches = Object.keys(STOCKS).filter(ticker =>
+      ticker.startsWith(input)
+    );
 
-      if (matches.length === 0) {
-        resultBox.innerHTML = `
-          <span style="color: #f87171; font-weight: 600;">
-            No tickers found starting with "${input}".
-          </span>
-        `;
-        return;
-      }
-
-      const list = matches
-        .map(ticker => `<li>${ticker} — ${STOCKS[ticker]}</li>`)
-        .join("");
-
+    if (matches.length === 0) {
+      resultBox.style.display = "block";
       resultBox.innerHTML = `
-        <span style="color: var(--accent); font-weight: 600;">
-          Suggestions (${matches.length}):
-        </span>
-        <ul style="margin-top: 0.4rem; padding-left: 1rem; line-height: 1.4;">
-          ${list}
-        </ul>
+        <span style="color: #f87171; font-weight:600;">No matches for "${input}"</span>
       `;
+      return;
     }
 
-    // Button uses the same logic (just re-runs suggestions)
-    function searchStock() {
-      updateSuggestions();
-    }
-  </script>
+    const list = matches
+      .map(ticker => `<li onclick="selectTicker('${ticker}')">${ticker} — ${STOCKS[ticker]}</li>`)
+      .join("");
+
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
+      <ul>${list}</ul>
+    `;
+  }
+
+  function selectTicker(ticker) {
+    document.getElementById("searchInput").value = ticker;
+    document.getElementById("searchResult").style.display = "none";
+  }
+
+  function searchStock() {
+    updateSuggestions();
+  }
+</script>
 </body>
 </html>
