@@ -284,6 +284,13 @@
       gap: 0.35rem;
       margin-top: 0.4rem;
     }
+    .tag-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
 
     .tag {
       font-size: 0.78rem;
@@ -664,14 +671,15 @@
   </div>
   <button type="submit" class="search-btn">Search</button>
 </form>
-            <div class="tag-row">
-              <span class="tag">AAPL</span>
-              <span class="tag">TSLA</span>
-              <span class="tag">NVDA</span>
-              <span class="tag">AMZN</span>
-              <span class="tag">META</span>
-              <span class="tag">MSFT</span>
-            </div>
+            <div class="tag-label">Suggestions:</div>
+<div class="tag-row">
+  <button type="button" class="tag" onclick="selectTicker('AAPL')">AAPL</button>
+  <button type="button" class="tag" onclick="selectTicker('TSLA')">TSLA</button>
+  <button type="button" class="tag" onclick="selectTicker('NVDA')">NVDA</button>
+  <button type="button" class="tag" onclick="selectTicker('AMZN')">AMZN</button>
+  <button type="button" class="tag" onclick="selectTicker('META')">META</button>
+  <button type="button" class="tag" onclick="selectTicker('MSFT')">MSFT</button>
+</div>
 
             <div class="search-callout">
               This search checks a static built-in list.  
@@ -924,10 +932,19 @@ function handleKey(event) {                // Key enter logic
 }
 function handleSubmit(event) {
   event.preventDefault();
-  // Reuse the Enter logic
+  handleKey({ key: "Enter", preventDefault: () => {} });
+}
+
+// ADD THIS:
+function selectTicker(ticker) {
+  const inputEl = document.getElementById("searchInput");
+  if (!inputEl) return;
+
+  inputEl.value = ticker.toUpperCase();
+
+  // Reuse Enter logic:
   handleKey({ key: "Enter", preventDefault: () => {} });
 }
 </script>
 </body>
 </html>
-
