@@ -1,1 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Ticker pages -->
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/AAPL.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/TSLA.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/NVDA.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/AMZN.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/MSFT.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/META.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ferdill.github.io/stock-metrics-website/GOOGL.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
