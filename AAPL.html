@@ -1,50 +1,1076 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AAPL – Apple Metrics</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta charset="UTF-8" />
+  <meta name="description" content="Transparent Metrics — prototype metrics layout for Apple Inc. (AAPL).">
+  <meta name="keywords" content="Apple, AAPL, stock metrics, financial ratios, valuation, Transparent Metrics">
+  <meta name="author" content="Ferdi">
+  <title>Apple (AAPL) · Transparent Metrics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root {
+      --bg: #050814;
+      --bg-elevated: #0b1020;
+      --bg-soft: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --danger: #f97373;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background: #050814;
-      color: #e5e7eb;
-      font-family: system-ui;
-      padding: 2rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 30%, #020617 60%, #000000 100%);
+      color: var(--text-main);
       line-height: 1.5;
     }
 
-    a { color: #38bdf8; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
     .container {
-      max-width: 900px;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    /* Header */
+
+    header {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      backdrop-filter: blur(16px);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 60%);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      max-width: 1120px;
       margin: 0 auto;
     }
 
-    .title {
-      font-size: 2rem;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    .logo-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      background: radial-gradient(circle at 30% 20%, #38bdf8, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #0b1120;
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.5);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    nav a {
+      position: relative;
+      padding-bottom: 0.1rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.15rem;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.18s ease;
+    }
+
+    nav a:hover {
+      color: var(--text-main);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero */
+
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      padding-top: 2.5rem;
+      padding-bottom: 2.75rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 840px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.15rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 70%);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3.1vw, 2.6rem);
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .hero-ticker {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 32rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      opacity: 0.9;
+    }
+
+    .hero-card {
+      border-radius: 1.25rem;
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.2), transparent 60%), var(--bg-elevated);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      padding: 1.4rem 1.35rem;
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.8);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-chip {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-keyline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    /* Sections */
+
+    .section {
+      padding: 1.75rem 0 0.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.1rem;
+      gap: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.0rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Metric layout */
+
+    .metric-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      .metric-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .metric-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .metric-group-card {
+      border-radius: 1.1rem;
+      padding: 0.9rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .metric-group-title {
+      font-size: 0.9rem;
+      font-weight: 550;
+      margin-bottom: 0.4rem;
+    }
+
+    .metric-group-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
       margin-bottom: 0.5rem;
     }
 
-    .subtitle {
-      color: #9ca3af;
-      margin-bottom: 2rem;
+    .metric-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .metric-table th,
+    .metric-table td {
+      padding: 0.35rem 0.2rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .metric-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .metric-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .metric-name-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font: inherit;
+      text-align: left;
+      padding: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .metric-name-btn span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .metric-name-btn:hover span.dot,
+    .metric-name-btn.active span.dot {
+      opacity: 1;
+    }
+
+    .metric-name-btn:hover {
+      color: var(--accent);
+    }
+
+    .metric-value {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .metric-value-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Detail card */
+
+    .metric-detail-card {
+      border-radius: 1.1rem;
+      padding: 1rem 1rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 6rem;
+    }
+
+    @media (max-width: 900px) {
+      .metric-detail-card {
+        position: static;
+      }
+    }
+
+    .metric-detail-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .metric-detail-category {
+      font-size: 0.82rem;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-detail-name {
+      font-size: 1rem;
+      font-weight: 560;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-detail-body {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .metric-detail-hint {
+      font-size: 0.76rem;
+      color: rgba(148, 163, 184, 0.9);
+      border-top: 1px dashed rgba(148, 163, 184, 0.4);
+      padding-top: 0.6rem;
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+      margin-top: 2.4rem;
+      padding: 0.9rem 0;
+      background: #020617;
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 3px;
+    }
+
+    @media (max-width: 640px) {
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="page">
+    <!-- HEADER -->
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <div class="logo-icon">TM</div>
+          <span>Transparent Metrics</span>
+        </div>
+        <nav>
+          <a href="./">Home</a>
+          <a href="./#how-it-works">How it works</a>
+          <a href="./#example">Example</a>
+          <a href="./#about">About</a>
+        </nav>
+      </div>
+    </header>
 
-    <a href="index.html">← Back to homepage</a>
+    <!-- MAIN -->
+    <main id="top">
+      <div class="container">
+        <!-- HERO -->
+        <section class="hero">
+          <div class="hero-grid">
+            <div>
+              <div class="pill">
+                <span class="pill-dot"></span>
+                Company prototype – metrics layout only, no live data
+              </div>
+              <div class="hero-ticker">Apple Inc. · AAPL</div>
+              <h1 class="hero-title">Apple metrics overview</h1>
+              <p class="hero-subtitle">
+                Prototype layout for how a single-company page could look.  
+                Ratios on the left, explanations on the right when you click.
+              </p>
+              <p class="hero-note">
+                Values shown here are placeholders. The point is the structure:  
+                one place where each metric is clickable and explains itself.
+              </p>
+            </div>
 
-    <h1 class="title">AAPL – Apple Inc.</h1>
-    <p class="subtitle">This page will show P/E, FCF yield, ROE, margins, formulas, and raw data inputs.</p>
+            <aside class="hero-card">
+              <div class="hero-card-header">
+                <div>
+                  <div style="font-size:0.9rem;font-weight:550;">How this page works</div>
+                  <div class="hero-keyline">
+                    Click any metric name to load its explanation in the panel.
+                  </div>
+                </div>
+                <span class="hero-chip">AAPL prototype</span>
+              </div>
+              <ul style="list-style:none;font-size:0.82rem;margin-top:0.25rem;">
+                <li>• Left side: grouped metrics (financial strength, profitability, etc.).</li>
+                <li>• Right side: detail card that updates when you click a metric.</li>
+                <li>• Later: plug real values + proper descriptions sourced from filings.</li>
+              </ul>
+            </aside>
+          </div>
+        </section>
 
-    <p>
-      For now, this is a static placeholder page.  
-      Later: connect it to your real API → compute metrics → show exact formulas.
-    </p>
+        <!-- METRIC LAYOUT -->
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Metrics (structure only)</h2>
+            <p class="section-subtitle">
+              All ratios clickable; descriptions will be filled in later.
+            </p>
+          </div>
 
+          <div class="metric-layout">
+            <!-- LEFT: metric groups -->
+            <div class="metric-groups">
+
+              <!-- Financial Strength -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Financial Strength</div>
+                <div class="metric-group-subtitle">
+                  Balance sheet resilience, leverage, and debt servicing capacity.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="cash-to-debt"><span class="dot"></span>Cash-to-Debt</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="net-debt"><span class="dot"></span>Net Debt</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="equity-to-asset"><span class="dot"></span>Equity-to-Asset</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="debt-to-equity"><span class="dot"></span>Debt-to-Equity</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="debt-to-ebitda"><span class="dot"></span>Debt-to-EBITDA</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="interest-coverage"><span class="dot"></span>Interest Coverage</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="piotroski-f-score"><span class="dot"></span>Piotroski F-Score</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="altman-z-score"><span class="dot"></span>Altman Z-Score</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="beneish-m-score"><span class="dot"></span>Beneish M-Score</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="capex-to-depreciation"><span class="dot"></span>CapEx-to-Depreciation</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="cash-flow-to-debt"><span class="dot"></span>Cash Flow-to-Debt</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="ocf-coverage-ratio"><span class="dot"></span>OCF Coverage Ratio</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Liquidity & Working Capital -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Liquidity & Working Capital Efficiency</div>
+                <div class="metric-group-subtitle">
+                  Short-term solvency and cash conversion through operations.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="current-ratio"><span class="dot"></span>Current Ratio</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="quick-ratio"><span class="dot"></span>Quick Ratio</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="cash-ratio"><span class="dot"></span>Cash Ratio</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="dso"><span class="dot"></span>Days Sales Outstanding (DSO)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="dio"><span class="dot"></span>Days Inventory Outstanding (DIO)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="dpo"><span class="dot"></span>Days Payable Outstanding (DPO)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="ccc"><span class="dot"></span>Cash Conversion Cycle (CCC)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Profitability -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Profitability</div>
+                <div class="metric-group-subtitle">
+                  Margins, returns on capital, and earnings quality.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="gross-margin"><span class="dot"></span>Gross Margin</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="operating-margin"><span class="dot"></span>Operating Margin</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="ebitda-margin"><span class="dot"></span>EBITDA Margin</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="net-margin"><span class="dot"></span>Net Margin</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="fcf-margin"><span class="dot"></span>FCF Margin</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="roe"><span class="dot"></span>Return on Equity (ROE)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="roa"><span class="dot"></span>Return on Assets (ROA)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="roce"><span class="dot"></span>Return on Capital Employed (ROCE)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="roic"><span class="dot"></span>Return on Invested Capital (ROIC)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="roiic"><span class="dot"></span>ROIIC</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="asset-turnover"><span class="dot"></span>Asset Turnover</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="capital-turnover"><span class="dot"></span>Capital Turnover</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="eps-quality"><span class="dot"></span>EPS Quality</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="years-profitability-10y"><span class="dot"></span>Years of Profitability (10Y)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Growth -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Growth</div>
+                <div class="metric-group-subtitle">
+                  Medium-term compound growth across key financial lines.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="rev-cagr-3y"><span class="dot"></span>3Y Revenue CAGR</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="ebitda-cagr-3y"><span class="dot"></span>3Y EBITDA CAGR</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="eps-cagr-3y"><span class="dot"></span>3Y EPS CAGR</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="fcf-cagr-3y"><span class="dot"></span>3Y FCF CAGR</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="book-value-growth-3y"><span class="dot"></span>3Y Book Value Growth</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="dividend-growth-3y"><span class="dot"></span>3Y Dividend Growth</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="tangible-book-growth-3y"><span class="dot"></span>3Y Tangible Book Growth</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Valuation -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Valuation</div>
+                <div class="metric-group-subtitle">
+                  Price multiples on earnings, sales, book value, and cash flows.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="pe-ratio"><span class="dot"></span>P/E Ratio</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="pe-without-nri"><span class="dot"></span>P/E without NRI</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="price-to-owner-earnings"><span class="dot"></span>Price-to-Owner-Earnings</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="peg-historical"><span class="dot"></span>PEG (historical)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="price-to-sales"><span class="dot"></span>Price-to-Sales (P/S)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="price-to-book"><span class="dot"></span>Price-to-Book (P/B)</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="price-to-fcf"><span class="dot"></span>Price-to-Free-Cash-Flow</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="price-to-ocf"><span class="dot"></span>Price-to-Operating-Cash-Flow</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Enterprise Value Multiples -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Enterprise Value / Yield-based (set 1)</div>
+                <div class="metric-group-subtitle">
+                  Yield-style views on earnings, cash flow, and capital returns.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="earnings-yield-1"><span class="dot"></span>Earnings Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="fcf-yield-1"><span class="dot"></span>FCF Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="shareholder-yield-1"><span class="dot"></span>Shareholder Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="dividend-yield-1"><span class="dot"></span>Dividend Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Yield-Based (second set, matching your list) -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Yield-Based (set 2)</div>
+                <div class="metric-group-subtitle">
+                  Same yield concepts, grouped separately if you want a different angle.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="earnings-yield-2"><span class="dot"></span>Earnings Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="fcf-yield-2"><span class="dot"></span>FCF Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="shareholder-yield-2"><span class="dot"></span>Shareholder Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="dividend-yield-2"><span class="dot"></span>Dividend Yield</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <!-- Momentum -->
+              <article class="metric-group-card">
+                <div class="metric-group-title">Momentum</div>
+                <div class="metric-group-subtitle">
+                  Price action over short, medium, and longer-term windows.
+                </div>
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="rsi-5d"><span class="dot"></span>5-Day RSI</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="rsi-9d"><span class="dot"></span>9-Day RSI</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="rsi-14d"><span class="dot"></span>14-Day RSI</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="momentum-3-1m"><span class="dot"></span>3–1 Month Momentum %</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="momentum-6-1m"><span class="dot"></span>6–1 Month Momentum %</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                    <tr>
+                      <td><button class="metric-name-btn" data-key="momentum-12-1m"><span class="dot"></span>12–1 Month Momentum %</button></td>
+                      <td class="metric-value"><span class="metric-value-pill">TBD</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+            </div>
+
+            <!-- RIGHT: metric detail panel -->
+            <aside class="metric-detail-card" id="metricDetailCard">
+              <div class="metric-detail-label">Metric detail</div>
+              <div class="metric-detail-category" id="metricCategory">Click a metric on the left</div>
+              <div class="metric-detail-name" id="metricName">Nothing selected yet</div>
+              <div class="metric-detail-body" id="metricDescription">
+                When you click on a metric name, this panel will show what it means and how it’s calculated.
+                For now the descriptions are placeholders; you’ll plug in the real text later.
+              </div>
+              <div class="metric-detail-hint">
+                Idea for later:
+                link each explanation directly to highlighted numbers in Apple’s 10-K / 10-Q,
+                so users can see exactly which line items feed into the formula.
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div>© 2025 Transparent Metrics. All rights reserved.</div>
+        <div class="footer-links">
+          <a href="./">Home</a>
+          <a href="./#about">About</a>
+          <a href="./#how-it-works">Concept</a>
+        </div>
+      </div>
+    </footer>
   </div>
+
+  <script>
+    // Metric metadata (descriptions intentionally generic / placeholder)
+    const METRIC_INFO = {
+      // Financial strength
+      "cash-to-debt": { category: "Financial Strength", name: "Cash-to-Debt" },
+      "net-debt": { category: "Financial Strength", name: "Net Debt" },
+      "equity-to-asset": { category: "Financial Strength", name: "Equity-to-Asset" },
+      "debt-to-equity": { category: "Financial Strength", name: "Debt-to-Equity" },
+      "debt-to-ebitda": { category: "Financial Strength", name: "Debt-to-EBITDA" },
+      "interest-coverage": { category: "Financial Strength", name: "Interest Coverage" },
+      "piotroski-f-score": { category: "Financial Strength", name: "Piotroski F-Score" },
+      "altman-z-score": { category: "Financial Strength", name: "Altman Z-Score" },
+      "beneish-m-score": { category: "Financial Strength", name: "Beneish M-Score" },
+      "capex-to-depreciation": { category: "Financial Strength", name: "CapEx-to-Depreciation" },
+      "cash-flow-to-debt": { category: "Financial Strength", name: "Cash Flow-to-Debt" },
+      "ocf-coverage-ratio": { category: "Financial Strength", name: "OCF Coverage Ratio" },
+
+      // Liquidity & working capital
+      "current-ratio": { category: "Liquidity & Working Capital Efficiency", name: "Current Ratio" },
+      "quick-ratio": { category: "Liquidity & Working Capital Efficiency", name: "Quick Ratio" },
+      "cash-ratio": { category: "Liquidity & Working Capital Efficiency", name: "Cash Ratio" },
+      "dso": { category: "Liquidity & Working Capital Efficiency", name: "Days Sales Outstanding (DSO)" },
+      "dio": { category: "Liquidity & Working Capital Efficiency", name: "Days Inventory Outstanding (DIO)" },
+      "dpo": { category: "Liquidity & Working Capital Efficiency", name: "Days Payable Outstanding (DPO)" },
+      "ccc": { category: "Liquidity & Working Capital Efficiency", name: "Cash Conversion Cycle (CCC)" },
+
+      // Profitability
+      "gross-margin": { category: "Profitability", name: "Gross Margin" },
+      "operating-margin": { category: "Profitability", name: "Operating Margin" },
+      "ebitda-margin": { category: "Profitability", name: "EBITDA Margin" },
+      "net-margin": { category: "Profitability", name: "Net Margin" },
+      "fcf-margin": { category: "Profitability", name: "FCF Margin" },
+      "roe": { category: "Profitability", name: "Return on Equity (ROE)" },
+      "roa": { category: "Profitability", name: "Return on Assets (ROA)" },
+      "roce": { category: "Profitability", name: "Return on Capital Employed (ROCE)" },
+      "roic": { category: "Profitability", name: "Return on Invested Capital (ROIC)" },
+      "roiic": { category: "Profitability", name: "ROIIC" },
+      "asset-turnover": { category: "Profitability", name: "Asset Turnover" },
+      "capital-turnover": { category: "Profitability", name: "Capital Turnover" },
+      "eps-quality": { category: "Profitability", name: "EPS Quality" },
+      "years-profitability-10y": { category: "Profitability", name: "Years of Profitability (10Y)" },
+
+      // Growth
+      "rev-cagr-3y": { category: "Growth", name: "3Y Revenue CAGR" },
+      "ebitda-cagr-3y": { category: "Growth", name: "3Y EBITDA CAGR" },
+      "eps-cagr-3y": { category: "Growth", name: "3Y EPS CAGR" },
+      "fcf-cagr-3y": { category: "Growth", name: "3Y FCF CAGR" },
+      "book-value-growth-3y": { category: "Growth", name: "3Y Book Value Growth" },
+      "dividend-growth-3y": { category: "Growth", name: "3Y Dividend Growth" },
+      "tangible-book-growth-3y": { category: "Growth", name: "3Y Tangible Book Growth" },
+
+      // Valuation
+      "pe-ratio": { category: "Valuation", name: "P/E Ratio" },
+      "pe-without-nri": { category: "Valuation", name: "P/E without NRI" },
+      "price-to-owner-earnings": { category: "Valuation", name: "Price-to-Owner-Earnings" },
+      "peg-historical": { category: "Valuation", name: "PEG (historical)" },
+      "price-to-sales": { category: "Valuation", name: "Price-to-Sales (P/S)" },
+      "price-to-book": { category: "Valuation", name: "Price-to-Book (P/B)" },
+      "price-to-fcf": { category: "Valuation", name: "Price-to-Free-Cash-Flow" },
+      "price-to-ocf": { category: "Valuation", name: "Price-to-Operating-Cash-Flow" },
+
+      // Yield / EV multiples – set 1
+      "earnings-yield-1": { category: "Enterprise Value Multiples", name: "Earnings Yield" },
+      "fcf-yield-1": { category: "Enterprise Value Multiples", name: "FCF Yield" },
+      "shareholder-yield-1": { category: "Enterprise Value Multiples", name: "Shareholder Yield" },
+      "dividend-yield-1": { category: "Enterprise Value Multiples", name: "Dividend Yield" },
+
+      // Yield-based – set 2
+      "earnings-yield-2": { category: "Yield-Based", name: "Earnings Yield" },
+      "fcf-yield-2": { category: "Yield-Based", name: "FCF Yield" },
+      "shareholder-yield-2": { category: "Yield-Based", name: "Shareholder Yield" },
+      "dividend-yield-2": { category: "Yield-Based", name: "Dividend Yield" },
+
+      // Momentum
+      "rsi-5d": { category: "Momentum", name: "5-Day RSI" },
+      "rsi-9d": { category: "Momentum", name: "9-Day RSI" },
+      "rsi-14d": { category: "Momentum", name: "14-Day RSI" },
+      "momentum-3-1m": { category: "Momentum", name: "3–1 Month Momentum %" },
+      "momentum-6-1m": { category: "Momentum", name: "6–1 Month Momentum %" },
+      "momentum-12-1m": { category: "Momentum", name: "12–1 Month Momentum %" }
+    };
+
+    const categoryEl = document.getElementById("metricCategory");
+    const nameEl = document.getElementById("metricName");
+    const descEl = document.getElementById("metricDescription");
+
+    function setActiveButton(clickedBtn) {
+      document.querySelectorAll(".metric-name-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+      if (clickedBtn) {
+        clickedBtn.classList.add("active");
+      }
+    }
+
+    function showMetricInfo(key, btn) {
+      const info = METRIC_INFO[key];
+      if (!info) return;
+
+      setActiveButton(btn);
+      categoryEl.textContent = info.category;
+      nameEl.textContent = info.name;
+      descEl.textContent = "Description coming soon. This is where you’ll explain how this ratio is calculated, which line items it uses for Apple, and how to interpret it for investors.";
+    }
+
+    document.querySelectorAll(".metric-name-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-key");
+        showMetricInfo(key, btn);
+      });
+    });
+  </script>
 </body>
 </html>
