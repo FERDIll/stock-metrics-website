@@ -1303,14 +1303,14 @@
     const nameEl = document.getElementById("metricName");
     const descEl = document.getElementById("metricDescription");
 
-    function setActiveButton(clickedBtn) {
-      document.querySelectorAll(".metric-name-btn").forEach(btn => {
-        btn.classList.remove("active");
-      });
-      if (clickedBtn) {
-        btn.classList.add("active");
-      }
-    }
+  function setActiveButton(clickedBtn) {
+  document.querySelectorAll(".metric-name-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+  if (clickedBtn) {
+    clickedBtn.classList.add("active");
+  }
+}
 
     function showMetricInfo(key, btn) {
       const info = METRIC_INFO[key];
