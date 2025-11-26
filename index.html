@@ -642,25 +642,28 @@
         <div>
           <div class="search-card">
              <div class="search-label">Ticker search</div>
-            
-            <div class="search-row">
-              <div class="search-input-wrapper">
-                <input
-                  id="searchInput"
-                  class="search-input"
-                  type="text"
-                  placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
-                  oninput="updateSuggestions()"
-                  onkeydown="handleKey(event)"
-                  autocomplete="new-password"
-                  autocomplete="off"
-                  autocorrect="off"
-                  />
-                <div id="searchResult" class="suggestion-box" style="display:none;"></div>
-              </div>
-              <button class="search-btn" onclick="searchStock()">Search</button>
-            </div>
-
+            <form
+  class="search-row"
+  autocomplete="off"
+  onsubmit="handleSubmit(event)"
+>
+  <div class="search-input-wrapper">
+    <input
+      id="searchInput"
+      class="search-input"
+      type="text"
+      name="ticker-input"
+      placeholder="Search by ticker (AAPL, TSLA, NVDA...)"
+      oninput="updateSuggestions()"
+      onkeydown="handleKey(event)"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+    />
+    <div id="searchResult" class="suggestion-box" style="display:none;"></div>
+  </div>
+  <button type="submit" class="search-btn">Search</button>
+</form>
             <div class="tag-row">
               <span class="tag">AAPL</span>
               <span class="tag">TSLA</span>
@@ -919,7 +922,11 @@ function handleKey(event) {                // Key enter logic
     </span>
   `;
 }
-
+function handleSubmit(event) {
+  event.preventDefault();
+  // Reuse the Enter logic
+  handleKey({ key: "Enter", preventDefault: () => {} });
+}
 </script>
 </body>
 </html>
