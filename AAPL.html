@@ -201,7 +201,9 @@
       opacity: 0.9;
     }
 
-    .hero-card {
+    /* Search card (hero right) */
+
+    .search-card {
       border-radius: 1.25rem;
       background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.2), transparent 60%), var(--bg-elevated);
       border: 1px solid rgba(148, 163, 184, 0.28);
@@ -211,26 +213,157 @@
       color: var(--text-muted);
     }
 
-    .hero-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.75rem;
+    .search-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
     }
 
-    .hero-chip {
-      font-size: 0.75rem;
-      padding: 0.15rem 0.55rem;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.55);
+    .current-ticker-label {
+      font-size: 0.78rem;
       color: var(--accent);
-      background: rgba(15, 23, 42, 0.9);
+      margin-bottom: 0.4rem;
     }
 
-    .hero-keyline {
+    .search-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input {
+      flex: 1;
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: rgba(148, 163, 184, 0.85);
+    }
+
+    .search-btn {
+      padding: 0.55rem 1.0rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: var(--accent);
+      color: #020617;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.9);
+      cursor: pointer;
+    }
+
+    .tag--current {
+      border-color: rgba(56, 189, 248, 0.85);
+      color: #0f172a;
+      background: var(--accent);
+      cursor: default;
+    }
+
+    .search-callout {
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin-top: 0.35rem;
+      border-radius: 0.8rem;
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      padding: 0.6rem 0.7rem;
+      background: rgba(15, 23, 42, 0.7);
+      margin-top: 0.75rem;
+    }
+
+    /* Autocomplete dropdown */
+
+    .suggestion-box {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 0.25rem;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 0.75rem;
+      padding: 0.35rem 0.4rem;
+      backdrop-filter: blur(8px);
+      max-height: 180px;
+      overflow-y: auto;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+      font-size: 0.82rem;
+      z-index: 20;
+    }
+
+    .suggestion-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .suggestion-box li {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      padding: 0.3rem 0.35rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .suggestion-box li:hover {
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    .suggestion-ticker {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    .suggestion-name {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    .suggestion-link {
+      display: flex;
+      gap: 0.3rem;
+      width: 100%;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .suggestion-link:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-radius: 0.4rem;
     }
 
     /* Sections */
@@ -502,21 +635,46 @@
               </p>
             </div>
 
-            <aside class="hero-card">
-              <div class="hero-card-header">
-                <div>
-                  <div style="font-size:0.9rem;font-weight:550;">How this page works</div>
-                  <div class="hero-keyline">
-                    Click any metric name to load its explanation in the panel.
-                  </div>
-                </div>
-                <span class="hero-chip">AAPL prototype</span>
+            <!-- HERO RIGHT: ticker search card -->
+            <aside class="search-card">
+              <div class="search-label">Ticker search</div>
+              <div class="current-ticker-label">
+                Currently viewing: <strong>Apple (AAPL)</strong>
               </div>
-              <ul style="list-style:none;font-size:0.82rem;margin-top:0.25rem;">
-                <li>• Left side: grouped metrics (financial strength, profitability, etc.).</li>
-                <li>• Right side: detail card that updates when you click a metric.</li>
-                <li>• Later: plug real values + proper descriptions sourced from filings.</li>
-              </ul>
+
+              <form class="search-row" autocomplete="off" onsubmit="handleSubmit(event)">
+                <div class="search-input-wrapper">
+                  <input
+                    id="searchInput"
+                    class="search-input"
+                    type="text"
+                    name="ticker-input"
+                    placeholder="Jump to another ticker (AAPL, TSLA, NVDA...)"
+                    oninput="updateSuggestions()"
+                    onkeydown="handleKey(event)"
+                    autocomplete="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                  />
+                  <div id="searchResult" class="suggestion-box" style="display:none;"></div>
+                </div>
+                <button type="submit" class="search-btn">Go</button>
+              </form>
+
+              <div class="tag-row">
+                <span class="tag tag--current">AAPL</span>
+                <span class="tag" onclick="goToTicker('TSLA')">TSLA</span>
+                <span class="tag" onclick="goToTicker('NVDA')">NVDA</span>
+                <span class="tag" onclick="goToTicker('AMZN')">AMZN</span>
+                <span class="tag" onclick="goToTicker('META')">META</span>
+                <span class="tag" onclick="goToTicker('MSFT')">MSFT</span>
+              </div>
+
+              <div class="search-callout">
+                Use this search to navigate between ticker pages.  
+                On each company page, the metrics panel stays the same structure,  
+                but the numbers and explanations will eventually be company-specific.
+              </div>
             </aside>
           </div>
         </section>
@@ -816,7 +974,7 @@
                 </table>
               </article>
 
-              <!-- Enterprise Value Multiples -->
+              <!-- Enterprise Value Multiples / yield set 1 -->
               <article class="metric-group-card">
                 <div class="metric-group-title">Enterprise Value / Yield-based (set 1)</div>
                 <div class="metric-group-subtitle">
@@ -850,7 +1008,7 @@
                 </table>
               </article>
 
-              <!-- Yield-Based (second set, matching your list) -->
+              <!-- Yield-Based (second set) -->
               <article class="metric-group-card">
                 <div class="metric-group-title">Yield-Based (set 2)</div>
                 <div class="metric-group-subtitle">
@@ -961,7 +1119,106 @@
   </div>
 
   <script>
-    // Metric metadata (descriptions intentionally generic / placeholder)
+    // --- Ticker navigation / search ---
+
+    const STOCKS = {
+      "AAPL": "Apple Inc.",
+      "TSLA": "Tesla Inc.",
+      "NVDA": "NVIDIA Corp.",
+      "AMZN": "Amazon.com Inc.",
+      "MSFT": "Microsoft Corp.",
+      "META": "Meta Platforms Inc.",
+      "GOOGL": "Alphabet Class A"
+    };
+
+    function goToTicker(ticker) {
+      if (!ticker) return;
+      const upper = ticker.toUpperCase();
+      // For now assume static pages like AAPL.html, TSLA.html, etc.
+      window.location.href = `${upper}.html`;
+    }
+
+    function updateSuggestions() {
+      const input = document.getElementById("searchInput").value.trim().toUpperCase();
+      const resultBox = document.getElementById("searchResult");
+
+      if (input === "") {
+        resultBox.style.display = "none";
+        resultBox.innerHTML = "";
+        return;
+      }
+
+      const matches = Object.keys(STOCKS).filter(ticker =>
+        ticker.startsWith(input)
+      );
+
+      if (matches.length === 0) {
+        resultBox.style.display = "block";
+        resultBox.innerHTML = `
+          <span style="color: #f87171; font-weight:600;">No matches for "${input}"</span>
+        `;
+        return;
+      }
+
+      const list = matches
+        .map(
+          ticker => `
+            <li>
+              <a href="${ticker}.html" class="suggestion-link">
+                <span class="suggestion-ticker">${ticker}</span>
+                <span class="suggestion-name">— ${STOCKS[ticker]}</span>
+              </a>
+            </li>
+          `
+        )
+        .join("");
+
+      resultBox.style.display = "block";
+      resultBox.innerHTML = `<ul>${list}</ul>`;
+    }
+
+    function handleKey(event) {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+
+      const inputEl = document.getElementById("searchInput");
+      const value = inputEl.value.trim().toUpperCase();
+      const resultBox = document.getElementById("searchResult");
+
+      if (!value) return;
+
+      if (STOCKS[value]) {
+        resultBox.style.display = "none";
+        goToTicker(value);
+        return;
+      }
+
+      const matches = Object.keys(STOCKS).filter(ticker =>
+        ticker.startsWith(value)
+      );
+
+      if (matches.length > 0) {
+        const best = matches[0];
+        resultBox.style.display = "none";
+        goToTicker(best);
+        return;
+      }
+
+      resultBox.style.display = "block";
+      resultBox.innerHTML = `
+        <span style="color: #f87171; font-weight:600;">
+          No matches for "${value}"
+        </span>
+      `;
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      handleKey({ key: "Enter", preventDefault: () => {} });
+    }
+
+    // --- Metric info panel ---
+
     const METRIC_INFO = {
       // Financial strength
       "cash-to-debt": { category: "Financial Strength", name: "Cash-to-Debt" },
@@ -1051,7 +1308,7 @@
         btn.classList.remove("active");
       });
       if (clickedBtn) {
-        clickedBtn.classList.add("active");
+        btn.classList.add("active");
       }
     }
 
