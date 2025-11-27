@@ -1182,7 +1182,7 @@
 
 
   
-  <script>
+<script>
 // =======================
 // Raw data for AAPL (backend layer only)
 // Fill these later with real numbers
@@ -1209,7 +1209,7 @@ const AAPL_RAW = {
       cogs: null,
       grossProfit: null,
       operatingExpenses: null,
-      depreciationAmort: null,                         //RANDOM VALUES
+      depreciationAmort: null, // placeholder
       operatingIncomeEBIT: null,
       ebitda: null,
       interestExpense: null,
@@ -1282,17 +1282,17 @@ function safeSum(...vals) {
 }
 
 // =======================
-// Ticker navigation / search (same pattern as home)
+// Ticker navigation / search
 // =======================
 
 const STOCKS = {
-  "AAPL": "Apple Inc.",
-  "TSLA": "Tesla Inc.",
-  "NVDA": "NVIDIA Corp.",
-  "AMZN": "Amazon.com Inc.",
-  "MSFT": "Microsoft Corp.",
-  "META": "Meta Platforms Inc.",
-  "GOOGL": "Alphabet Class A"
+  AAPL: "Apple Inc.",
+  TSLA: "Tesla Inc.",
+  NVDA: "NVIDIA Corp.",
+  AMZN: "Amazon.com Inc.",
+  MSFT: "Microsoft Corp.",
+  META: "Meta Platforms Inc.",
+  GOOGL: "Alphabet Class A"
 };
 
 function goToTicker(ticker) {
@@ -1382,7 +1382,6 @@ function handleSubmit(event) {
 
 // =======================
 // Metric info + formulas
-// (full list; compute wired for core ones)
 // =======================
 
 const METRIC_INFO = {
@@ -1472,14 +1471,13 @@ const METRIC_INFO = {
     category: "Financial Strength",
     name: "Debt-to-EBITDA",
     description: "Total debt divided by EBITDA. Rough pay-down years in a no-growth world.",
-    formula: "(Short-term debt + Long-term debt) ÷ EBITDA",
-    // compute later when you trust EBITDA inputs
+    formula: "(Short-term debt + Long-term debt) ÷ EBITDA"
   },
   "interest-coverage": {
     category: "Financial Strength",
     name: "Interest Coverage",
     description: "EBIT divided by interest expense. How many times operating income covers interest.",
-    formula: "EBIT ÷ Interest expense",
+    formula: "EBIT ÷ Interest expense"
   },
   "piotroski-f-score": {
     category: "Financial Strength",
@@ -1798,7 +1796,7 @@ const METRIC_INFO = {
           `Share price: ${price}`,
           `Net income (ttm): ${ni}`,
           `Shares outstanding: ${shares}`,
-          `EPS (ttm) = ${(eps).toFixed(2)}`
+          `EPS (ttm) = ${eps.toFixed(2)}`
         ]
       };
     }
@@ -2016,7 +2014,7 @@ function showMetricInfo(key, btn) {
   formulaEl.textContent = formulaText;
   inputsEl.innerHTML = inputsHtml || "Inputs will appear here once values are filled in.";
 
-  // NEW: update the pill in the left-hand table row
+  // Update the pill in the left-hand table row
   if (btn) {
     const row = btn.closest("tr");
     if (row) {
@@ -2028,7 +2026,7 @@ function showMetricInfo(key, btn) {
   }
 }
 
-// Attach click handlers after DOM is ready
+// Attach click handlers
 document.querySelectorAll(".metric-name-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const key = btn.getAttribute("data-key");
@@ -2036,7 +2034,7 @@ document.querySelectorAll(".metric-name-btn").forEach(btn => {
   });
 });
 
-// Optional: select a default metric on load, e.g. P/E
+// Default selection: P/E
 const defaultBtn = document.querySelector('.metric-name-btn[data-key="pe-ratio"]');
 if (defaultBtn) {
   showMetricInfo("pe-ratio", defaultBtn);
