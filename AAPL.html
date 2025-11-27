@@ -2028,11 +2028,6 @@ function showMetricInfo(key, btn) {
   }
 }
 
-  valueEl.textContent = valueText;
-  formulaEl.textContent = formulaText;
-  inputsEl.innerHTML = inputsHtml || "Inputs will appear here once values are filled in.";
-}
-
 // Attach click handlers after DOM is ready
 document.querySelectorAll(".metric-name-btn").forEach(btn => {
   btn.addEventListener("click", () => {
