@@ -458,16 +458,29 @@
     }
 
     .metric-name-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-main);
-      font: inherit;
-      text-align: left;
-      padding: 0;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.45rem;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.metric-name-btn:hover {
+  background: rgba(56, 189, 248, 0.12);
+}
+
+/* Highlight the entire row when active */
+.metric-name-btn.active {
+  background: rgba(56, 189, 248, 0.20);
+  color: var(--accent);
+  font-weight: 600;
+
     }
 
     .metric-name-btn span.dot {
