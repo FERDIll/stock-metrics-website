@@ -1132,6 +1132,141 @@
   </div>
 
   <script>
+
+// =======================
+// Raw data for AAPL (backend layer only)
+// =======================
+
+const AAPL_RAW = {
+  // So you remember what period these belong to
+  asOf: "YYYY-MM-DD", // e.g. "2024-09-28" for AAPL fiscal year end
+
+  // 1. MARKET INPUTS (5)
+  market: {
+    sharePrice: null,              // e.g. 190.15
+    sharesOutstanding: null,       // e.g. 15400000000
+    marketCap: null,               // can be computed = price * shares
+    enterpriseValue: null,         // can be computed = equity + debt - cash
+
+    // Array of { date: "YYYY-MM-DD", close: number }
+    historicalPrices: [
+      // { date: "2024-11-01", close: 190.15 },
+      // { date: "2024-11-02", close: 192.30 },
+    ]
+  },
+
+  // 2. RAW FINANCIAL INPUTS
+  statements: {
+    // 2.1 INCOME STATEMENT (11)
+    incomeStatement: {
+      revenue:                null,
+      cogs:                   null,   // Cost of goods sold
+      grossProfit:            null,
+
+      operatingExpenses:      null,   // SG&A + R&D, etc.
+      depreciationAmort:      null,
+      operatingIncomeEBIT:    null,
+      ebitda:                 null,
+
+      interestExpense:        null,
+      pretaxIncome:           null,
+      netIncome:              null,
+      netIncomeExNRI:         null    // NI excluding non-recurring items
+    },
+
+    // 2.2 BALANCE SHEET (13 incl. invested capital)
+    balanceSheet: {
+      totalAssets:          null,
+      totalCurrentAssets:   null,
+
+      cashAndEquivalents:   null,
+      accountsReceivable:   null,
+      inventory:            null,
+      otherCurrentAssets:   null,
+
+      totalLiabilities:     null,
+      currentLiabilities:   null,
+      accountsPayable:      null,
+
+      longTermDebt:         null,
+      shortTermDebt:        null,
+
+      shareholdersEquity:   null,
+
+      // Can be computed later as: LT debt + ST debt + equity – cash
+      investedCapital:      null
+    },
+
+    // 2.3 CASH FLOW STATEMENT (7)
+    cashFlow: {
+      operatingCashFlow:     null,   // OCF
+      freeCashFlow:          null,   // FCF = OCF – CapEx
+      capitalExpenditures:   null,   // CapEx
+
+      ownerEarnings:         null,   // NI + D&A – CapEx
+      dividendsPaid:         null,
+      cashFlowFromFinancing: null,
+
+      taxRate:               null    // for NOPAT = EBIT × (1 – tax)
+    }
+  },
+
+  // 3. OPTIONAL INPUTS (HIGH-VALUE)
+  optional: {
+    // 3.1 ACCOUNTING & QUALITY (4)
+    quality: {
+      retainedEarnings:     null,
+      workingCapital:       null,    // can be computed = CA – CL
+      tenYearProfitHistory: [
+        // Example structure:
+        // { year: 2015, netIncome: 53394 },
+        // { year: 2016, netIncome: 45687 },
+      ],
+      segmentRevenue: [
+        // Example:
+        // { segment: "iPhone", revenue: null },
+        // { segment: "Services", revenue: null },
+      ]
+    },
+
+    // 3.2 TIME-SERIES FOR GROWTH (CAGR, ROIIC, etc.)
+    multiYearFinancials: {
+      revenue: [
+        // { year: 2020, value: null },
+        // { year: 2021, value: null },
+      ],
+      ebitda: [
+        // { year: 2020, value: null },
+      ],
+      netIncome: [
+        // { year: 2020, value: null },
+      ],
+      freeCashFlow: [
+        // { year: 2020, value: null },
+      ],
+      bookValue: [
+        // { year: 2020, value: null },
+      ]
+    },
+
+    // 3.3 FINANCING DETAIL (Buybacks / Issuance)
+    financingDetail: {
+      shareRepurchases:   null,   // amount spent on buybacks
+      shareIssuances:     null    // cash raised from issuing shares
+      // later you can compute net = repurchases – issuances
+    }
+  }
+};
+
+// OPTIONAL: expose in console if you want to play with it later
+window.AAPL_RAW = AAPL_RAW;
+
+
+// =======================
+// ...your existing metric / UI code comes AFTER this
+// =======================
+
+    
     // --- Ticker navigation / search ---
 
     const STOCKS = {
