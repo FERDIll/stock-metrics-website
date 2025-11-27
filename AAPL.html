@@ -1983,6 +1983,30 @@ function setActiveButton(clickedBtn) {
 function showMetricInfo(key, btn) {
   const info = METRIC_INFO[key];
   if (!info) return;
+}
+  function populateAllMetricPills() {
+  document.querySelectorAll(".metric-name-btn").forEach(btn => {
+    const key = btn.getAttribute("data-key");
+    const info = METRIC_INFO[key];
+    if (!info) return;
+
+    let valueText = "N/A";
+
+    if (info.compute) {
+      const res = info.compute(window.AAPL_RAW || {});
+      if (res) {
+        if (res.display) valueText = res.display;
+        else if (res.value != null) valueText = String(res.value);
+      }
+    }
+
+    const row = btn.closest("tr");
+    if (row) {
+      const pill = row.querySelector(".metric-value-pill");
+      if (pill) pill.textContent = valueText;
+    }
+  });
+}
 
   setActiveButton(btn);
   categoryEl.textContent = info.category;
@@ -2026,7 +2050,7 @@ function showMetricInfo(key, btn) {
   }
 }
 
-// Attach click handlers
+// Attach click handlers after DOM is ready
 document.querySelectorAll(".metric-name-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const key = btn.getAttribute("data-key");
@@ -2034,7 +2058,10 @@ document.querySelectorAll(".metric-name-btn").forEach(btn => {
   });
 });
 
-// Default selection: P/E
+// NEW: populate every pill immediately on page load
+populateAllMetricPills();
+
+// Optional: select a default metric on load (P/E)
 const defaultBtn = document.querySelector('.metric-name-btn[data-key="pe-ratio"]');
 if (defaultBtn) {
   showMetricInfo("pe-ratio", defaultBtn);
