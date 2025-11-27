@@ -2011,6 +2011,23 @@ function showMetricInfo(key, btn) {
     }
   }
 
+  // Update the detail panel
+  valueEl.textContent = valueText;
+  formulaEl.textContent = formulaText;
+  inputsEl.innerHTML = inputsHtml || "Inputs will appear here once values are filled in.";
+
+  // NEW: update the pill in the left-hand table row
+  if (btn) {
+    const row = btn.closest("tr");
+    if (row) {
+      const pill = row.querySelector(".metric-value-pill");
+      if (pill) {
+        pill.textContent = valueText;
+      }
+    }
+  }
+}
+
   valueEl.textContent = valueText;
   formulaEl.textContent = formulaText;
   inputsEl.innerHTML = inputsHtml || "Inputs will appear here once values are filled in.";
