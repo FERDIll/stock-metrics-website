@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FMP AAPL Test</title>
-
+  <title>FMP AAPL Sandbox</title>
   <style>
     body {
-      background: #0b0f1a;
+      background: #020617;
       color: #e5e7eb;
-      font-family: Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
       padding: 20px;
     }
 
@@ -17,188 +17,423 @@
       margin-bottom: 0.5rem;
     }
 
-    p {
-      font-size: 0.9rem;
+    h2 {
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
       color: #9ca3af;
-      margin-bottom: 1rem;
     }
 
-    pre {
-      background: #111827;
-      padding: 20px;
-      border-radius: 8px;
-      overflow-x: auto;
-      max-height: 480px;
+    .subheading {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 0.75rem;
+    }
+
+    .groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .group-card {
+      border-radius: 0.75rem;
+      background: #0b1120;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 0.8rem 0.9rem 0.9rem;
+    }
+
+    .group-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .group-desc {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
     }
 
     .btn {
-      padding: 10px 16px;
-      background: #1f2937;
+      padding: 0.25rem 0.55rem;
+      background: #020617;
+      border-radius: 999px;
       border: 1px solid #38bdf8;
-      border-radius: 6px;
       color: #38bdf8;
       cursor: pointer;
-      margin-bottom: 10px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      white-space: nowrap;
     }
 
     .btn:hover {
-      background: #28415c;
+      background: #1e293b;
     }
 
-    .btn-row {
+    .btn-secondary {
+      border-color: rgba(148, 163, 184, 0.5);
+      color: #cbd5f5;
+    }
+
+    .btn-secondary:hover {
+      background: #111827;
+    }
+
+    .toolbar {
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
       display: flex;
+      align-items: center;
+      gap: 0.75rem;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
+      font-size: 0.85rem;
     }
 
-    .label {
-      font-size: 0.8rem;
+    .tag {
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 0.78rem;
       color: #9ca3af;
-      margin-top: 0.5rem;
-      margin-bottom: 0.25rem;
     }
 
-    .url-box {
-      background: #020617;
-      border-radius: 6px;
-      padding: 8px 10px;
+    #currentEndpoint {
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+
+    #currentUrl {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.75rem;
-      border: 1px solid #374151;
-      overflow-x: auto;
-      margin-bottom: 10px;
+      font-size: 0.78rem;
       color: #9ca3af;
+      word-break: break-all;
     }
 
-    .status-ok {
-      color: #4ade80;
-      font-weight: 600;
+    pre {
+      background: #020617;
+      padding: 16px;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      max-height: 70vh;
     }
 
-    .status-error {
-      color: #f97373;
-      font-weight: 600;
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
   </style>
 </head>
-
 <body>
 
-<h1>FMP AAPL Test</h1>
-<p>
-  Quick dev page to test different FMP endpoints for <strong>AAPL</strong>.  
-  Click a button to see the URL and raw JSON (trimmed for large arrays).
-</p>
+  <h1>FMP AAPL Sandbox</h1>
+  <div class="subheading">
+    Click any button to fetch that dataset for <strong>AAPL</strong>.  
+    Everything here is symbol-level (no macro, FX, or crypto).
+  </div>
 
-<div class="btn-row">
-  <button class="btn" onclick="runEndpoint('income')">Income statement</button>
-  <button class="btn" onclick="runEndpoint('balance')">Balance sheet</button>
-  <button class="btn" onclick="runEndpoint('cashflow')">Cash flow</button>
-  <button class="btn" onclick="runEndpoint('quote')">Quote</button>
-  <button class="btn" onclick="runEndpoint('key-metrics')">Key metrics</button>
-  <button class="btn" onclick="runEndpoint('ratios')">Ratios</button>
-</div>
+  <div class="groups">
+    <!-- Core financials -->
+    <section class="group-card">
+      <div class="group-title">Core financial statements</div>
+      <div class="group-desc">Standardized annual statements from FMP.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('income-statement')">Income statement</button>
+        <button class="btn" onclick="runEndpoint('balance-sheet-statement')">Balance sheet</button>
+        <button class="btn" onclick="runEndpoint('cash-flow-statement')">Cash flow</button>
+        <button class="btn-secondary" onclick="runEndpoint('financial-statement-full-as-reported')">Full as-reported</button>
+        <button class="btn-secondary" onclick="runEndpoint('income-statement-as-reported')">IS as-reported</button>
+        <button class="btn-secondary" onclick="runEndpoint('balance-sheet-statement-as-reported')">BS as-reported</button>
+        <button class="btn-secondary" onclick="runEndpoint('cash-flow-statement-as-reported')">CF as-reported</button>
+      </div>
+    </section>
 
-<div class="label">Request URL</div>
-<div id="urlBox" class="url-box">–</div>
+    <!-- Growth -->
+    <section class="group-card">
+      <div class="group-title">Growth series</div>
+      <div class="group-desc">Year-over-year growth for each statement line.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('income-statement-growth')">IS growth</button>
+        <button class="btn" onclick="runEndpoint('balance-sheet-statement-growth')">BS growth</button>
+        <button class="btn" onclick="runEndpoint('cash-flow-statement-growth')">CF growth</button>
+        <button class="btn-secondary" onclick="runEndpoint('financial-growth')">Financial growth (combined)</button>
+      </div>
+    </section>
 
-<div class="label">
-  Status: <span id="statusLabel">Idle</span>
-</div>
+    <!-- Ratios & metrics -->
+    <section class="group-card">
+      <div class="group-title">Ratios & key metrics</div>
+      <div class="group-desc">Pre-computed ratios, enterprise values, and scores.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('key-metrics')">Key metrics</button>
+        <button class="btn" onclick="runEndpoint('key-metrics-ttm')">Key metrics TTM</button>
+        <button class="btn" onclick="runEndpoint('ratios')">Ratios</button>
+        <button class="btn" onclick="runEndpoint('ratios-ttm')">Ratios TTM</button>
+        <button class="btn-secondary" onclick="runEndpoint('enterprise-values')">Enterprise values</button>
+        <button class="btn-secondary" onclick="runEndpoint('financial-scores')">Financial scores</button>
+        <button class="btn-secondary" onclick="runEndpoint('owner-earnings')">Owner earnings</button>
+      </div>
+    </section>
 
-<div class="label">JSON output</div>
-<pre id="output">Click a button to load data...</pre>
+    <!-- Market & price -->
+    <section class="group-card">
+      <div class="group-title">Market & price</div>
+      <div class="group-desc">Quote, market cap, and historical series.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('quote')">Quote</button>
+        <button class="btn" onclick="runEndpoint('market-capitalization')">Market cap</button>
+        <button class="btn-secondary" onclick="runEndpoint('historical-market-capitalization')">Market cap (historical)</button>
+      </div>
+    </section>
 
-<script>
-  // Config – you can reuse the key you already used here
-  const API_KEY = "gfEPMOcj1ubmfbrlE3gwV34UJTzauVNp";
-  const BASE_URL = "https://financialmodelingprep.com/stable";
-  const SYMBOL = "AAPL";
+    <!-- Company profile & segments -->
+    <section class="group-card">
+      <div class="group-title">Company profile & segments</div>
+      <div class="group-desc">Static company data and revenue splits.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('profile')">Profile</button>
+        <button class="btn-secondary" onclick="runEndpoint('stock-peers')">Peers</button>
+        <button class="btn-secondary" onclick="runEndpoint('historical-employee-count')">Employee count</button>
+        <button class="btn-secondary" onclick="runEndpoint('revenue-product-segmentation')">Revenue by product</button>
+        <button class="btn-secondary" onclick="runEndpoint('revenue-geographic-segmentation')">Revenue by geography</button>
+      </div>
+    </section>
 
-  const urlBox = document.getElementById("urlBox");
-  const statusLabel = document.getElementById("statusLabel");
-  const output = document.getElementById("output");
+    <!-- Filings & reports -->
+    <section class="group-card">
+      <div class="group-title">Filings & reports</div>
+      <div class="group-desc">Report dates and JSON-parsed filings.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('financial-reports-dates')">Report dates</button>
+        <button class="btn-secondary" onclick="runEndpoint('financial-reports-json')">Reports JSON (2022 FY)</button>
+      </div>
+    </section>
 
-  function buildUrl(kind) {
-    const baseParams = `symbol=${encodeURIComponent(SYMBOL)}&limit=1&apikey=${encodeURIComponent(API_KEY)}`;
+    <!-- Earnings, dividends, news -->
+    <section class="group-card">
+      <div class="group-title">Earnings, dividends, news</div>
+      <div class="group-desc">Forward/backward-looking signals around the stock.</div>
+      <div class="btn-list">
+        <button class="btn" onclick="runEndpoint('earnings')">Earnings (company)</button>
+        <button class="btn-secondary" onclick="runEndpoint('dividends-company')">Dividends (company)</button>
+        <button class="btn-secondary" onclick="runEndpoint('analyst-estimates')">Analyst estimates</button>
+        <button class="btn-secondary" onclick="runEndpoint('news-stock')">News (stock search)</button>
+        <button class="btn-secondary" onclick="runEndpoint('press-releases-search')">Press releases (AAPL)</button>
+      </div>
+    </section>
+  </div>
 
-    switch (kind) {
-      case "income":
-        return `${BASE_URL}/income-statement?${baseParams}`;
-      case "balance":
-        return `${BASE_URL}/balance-sheet-statement?${baseParams}`;
-      case "cashflow":
-        return `${BASE_URL}/cash-flow-statement?${baseParams}`;
-      case "quote":
-        // quote uses symbol separately in their docs
-        return `${BASE_URL}/quote?symbol=${encodeURIComponent(SYMBOL)}&apikey=${encodeURIComponent(API_KEY)}`;
-      case "key-metrics":
-        return `${BASE_URL}/key-metrics?${baseParams}`;
-      case "ratios":
-        return `${BASE_URL}/ratios?${baseParams}`;
-      default:
-        throw new Error("Unknown endpoint kind: " + kind);
-    }
-  }
+  <div class="toolbar">
+    <span class="tag">Ticker: AAPL</span>
+    <span>Last endpoint: <span id="currentEndpoint">none</span></span>
+  </div>
+  <div id="currentUrl"></div>
 
-  function setStatus(text, ok = false, error = false) {
-    statusLabel.textContent = text;
-    statusLabel.className = "";
-    if (ok) statusLabel.classList.add("status-ok");
-    if (error) statusLabel.classList.add("status-error");
-  }
+  <pre id="output"><code>Click any button above to fetch data...</code></pre>
 
-  async function runEndpoint(kind) {
-    let url;
-    try {
-      url = buildUrl(kind);
-    } catch (err) {
-      urlBox.textContent = err.message;
-      setStatus("Error building URL", false, true);
-      output.textContent = err.stack || String(err);
-      return;
-    }
+  <script>
+    // =======================
+    // CONFIG
+    // =======================
+    const TICKER = "AAPL";
+    const FMP_API_KEY = "YOUR_FMP_API_KEY"; // <-- put your key here
+    const BASE = "https://financialmodelingprep.com/stable";
 
-    urlBox.textContent = url;
-    setStatus("Loading…");
-    output.textContent = "Loading...";
+    // =======================
+    // ENDPOINT MAP
+    // =======================
+    const ENDPOINTS = {
+      // Core financials
+      "income-statement": {
+        label: "Income statement",
+        url: () => `${BASE}/income-statement?symbol=${TICKER}&limit=5&apikey=${FMP_API_KEY}`
+      },
+      "balance-sheet-statement": {
+        label: "Balance sheet statement",
+        url: () => `${BASE}/balance-sheet-statement?symbol=${TICKER}&limit=5&apikey=${FMP_API_KEY}`
+      },
+      "cash-flow-statement": {
+        label: "Cash flow statement",
+        url: () => `${BASE}/cash-flow-statement?symbol=${TICKER}&limit=5&apikey=${FMP_API_KEY}`
+      },
+      "financial-statement-full-as-reported": {
+        label: "Financial statement full (as reported)",
+        url: () => `${BASE}/financial-statement-full-as-reported?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "income-statement-as-reported": {
+        label: "Income statement (as reported)",
+        url: () => `${BASE}/income-statement-as-reported?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "balance-sheet-statement-as-reported": {
+        label: "Balance sheet (as reported)",
+        url: () => `${BASE}/balance-sheet-statement-as-reported?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "cash-flow-statement-as-reported": {
+        label: "Cash flow (as reported)",
+        url: () => `${BASE}/cash-flow-statement-as-reported?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
 
-    try {
-      const response = await fetch(url);
+      // Growth
+      "income-statement-growth": {
+        label: "Income statement growth",
+        url: () => `${BASE}/income-statement-growth?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "balance-sheet-statement-growth": {
+        label: "Balance sheet growth",
+        url: () => `${BASE}/balance-sheet-statement-growth?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "cash-flow-statement-growth": {
+        label: "Cash flow growth",
+        url: () => `${BASE}/cash-flow-statement-growth?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "financial-growth": {
+        label: "Financial growth (combined)",
+        url: () => `${BASE}/financial-growth?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
 
-      if (!response.ok) {
-        setStatus(`HTTP ${response.status} ${response.statusText}`, false, true);
-        const text = await response.text().catch(() => "");
-        output.textContent = text || "No error body.";
+      // Ratios & metrics
+      "key-metrics": {
+        label: "Key metrics",
+        url: () => `${BASE}/key-metrics?symbol=${TICKER}&limit=10&apikey=${FMP_API_KEY}`
+      },
+      "key-metrics-ttm": {
+        label: "Key metrics TTM",
+        url: () => `${BASE}/key-metrics-ttm?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "ratios": {
+        label: "Ratios",
+        url: () => `${BASE}/ratios?symbol=${TICKER}&limit=10&apikey=${FMP_API_KEY}`
+      },
+      "ratios-ttm": {
+        label: "Ratios TTM",
+        url: () => `${BASE}/ratios-ttm?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "enterprise-values": {
+        label: "Enterprise values",
+        url: () => `${BASE}/enterprise-values?symbol=${TICKER}&limit=10&apikey=${FMP_API_KEY}`
+      },
+      "financial-scores": {
+        label: "Financial scores",
+        url: () => `${BASE}/financial-scores?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "owner-earnings": {
+        label: "Owner earnings",
+        url: () => `${BASE}/owner-earnings?symbol=${TICKER}&limit=10&apikey=${FMP_API_KEY}`
+      },
+
+      // Market & price
+      "quote": {
+        label: "Quote",
+        url: () => `${BASE}/quote?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "market-capitalization": {
+        label: "Market capitalization",
+        url: () => `${BASE}/market-capitalization?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "historical-market-capitalization": {
+        label: "Historical market capitalization",
+        url: () => `${BASE}/historical-market-capitalization?symbol=${TICKER}&limit=30&apikey=${FMP_API_KEY}`
+      },
+
+      // Profile & segments
+      "profile": {
+        label: "Company profile",
+        url: () => `${BASE}/profile?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "stock-peers": {
+        label: "Stock peers",
+        url: () => `${BASE}/stock-peers?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "historical-employee-count": {
+        label: "Historical employee count",
+        url: () => `${BASE}/historical-employee-count?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "revenue-product-segmentation": {
+        label: "Revenue by product",
+        url: () => `${BASE}/revenue-product-segmentation?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "revenue-geographic-segmentation": {
+        label: "Revenue by geography",
+        url: () => `${BASE}/revenue-geographic-segmentation?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+
+      // Filings & reports
+      "financial-reports-dates": {
+        label: "Financial reports dates",
+        url: () => `${BASE}/financial-reports-dates?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "financial-reports-json": {
+        label: "Financial reports JSON (2022 FY)",
+        url: () => `${BASE}/financial-reports-json?symbol=${TICKER}&year=2022&period=FY&apikey=${FMP_API_KEY}`
+      },
+
+      // Earnings, dividends, news, estimates
+      "earnings": {
+        label: "Earnings (company)",
+        url: () => `${BASE}/earnings?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "dividends-company": {
+        label: "Dividends (company)",
+        url: () => `${BASE}/dividends-company?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "analyst-estimates": {
+        label: "Analyst estimates",
+        url: () => `${BASE}/analyst-estimates?symbol=${TICKER}&apikey=${FMP_API_KEY}`
+      },
+      "news-stock": {
+        label: "News (stock search)",
+        url: () => `${BASE}/news/stock?symbols=${TICKER}&limit=20&apikey=${FMP_API_KEY}`
+      },
+      "press-releases-search": {
+        label: "Press releases (AAPL)",
+        url: () => `${BASE}/news/press-releases?symbols=${TICKER}&limit=20&apikey=${FMP_API_KEY}`
+      }
+    };
+
+    // =======================
+    // FETCH HANDLER
+    // =======================
+    async function runEndpoint(key) {
+      const cfg = ENDPOINTS[key];
+      const outputEl = document.getElementById("output");
+      const currentEndpointEl = document.getElementById("currentEndpoint");
+      const currentUrlEl = document.getElementById("currentUrl");
+
+      if (!cfg) {
+        outputEl.textContent = `Unknown endpoint key: ${key}`;
         return;
       }
 
-      const json = await response.json();
+      const url = cfg.url();
 
-      // For endpoints that return big arrays, just show the first few items
-      let display;
-      if (Array.isArray(json)) {
-        const maxItems = 3;
-        display = {
-          _note: `Array of length ${json.length}. Showing first ${Math.min(maxItems, json.length)} element(s).`,
-          items: json.slice(0, maxItems)
-        };
-      } else {
-        display = json;
+      currentEndpointEl.textContent = cfg.label;
+      currentUrlEl.textContent = url;
+      outputEl.textContent = "Loading...";
+
+      try {
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          outputEl.textContent = `Error: ${res.status} ${res.statusText}`;
+          return;
+        }
+
+        const data = await res.json();
+        outputEl.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        outputEl.textContent = "Fetch failed: " + err.message;
       }
-
-      setStatus("OK", true, false);
-      output.textContent = JSON.stringify(display, null, 2);
-    } catch (err) {
-      setStatus("Fetch failed", false, true);
-      output.textContent = String(err);
     }
-  }
-
-  // If you want it to auto-run one endpoint on load, uncomment:
-  // runEndpoint("income");
-</script>
+  </script>
 </body>
 </html>
