@@ -1184,32 +1184,33 @@
   
 <script>
 // =======================
-// Raw data for AAPL (backend layer only)
-// Fill these later with real numbers
+// CONFIG: FMP API
+// =======================
+const FMP_API_KEY = "YOUR_FMP_API_KEY"; // <--- put your key here
+const FMP_BASE_URL = "https://financialmodelingprep.com/stable";
+
+// =======================
+// Raw data template for AAPL
 // =======================
 
-const AAPL_RAW = {
-  asOf: "YYYY-MM-DD", // e.g. "2024-09-28"
+const AAPL_RAW_TEMPLATE = {
+  asOf: null,
 
-  // 1. MARKET INPUTS
   market: {
     sharePrice: null,
     sharesOutstanding: null,
     marketCap: null,
     enterpriseValue: null,
-    historicalPrices: [
-      // { date: "2024-11-01", close: 190.15 },
-    ]
+    historicalPrices: []
   },
 
-  // 2. RAW FINANCIAL INPUTS
   statements: {
     incomeStatement: {
       revenue: null,
       cogs: null,
       grossProfit: null,
       operatingExpenses: null,
-      depreciationAmort: null, // placeholder
+      depreciationAmort: null,
       operatingIncomeEBIT: null,
       ebitda: null,
       interestExpense: null,
@@ -1243,7 +1244,6 @@ const AAPL_RAW = {
     }
   },
 
-  // 3. OPTIONAL INPUTS
   optional: {
     quality: {
       retainedEarnings: null,
@@ -1265,7 +1265,8 @@ const AAPL_RAW = {
   }
 };
 
-window.AAPL_RAW = AAPL_RAW;
+// live object used by metrics
+window.AAPL_RAW = JSON.parse(JSON.stringify(AAPL_RAW_TEMPLATE));
 
 // =======================
 // Helpers
@@ -1378,6 +1379,137 @@ function handleKey(event) {
 function handleSubmit(event) {
   event.preventDefault();
   handleKey({ key: "Enter", preventDefault: () => {} });
+}
+
+// =======================
+// FMP FETCH LAYER
+// =======================
+
+async function fetchAaplRawFromFmp(ticker) {
+  const params = `symbol=${ticker}&limit=1&apikey=${FMP_API_KEY}`;
+
+  const [incomeRes, balanceRes, cashRes, quoteRes] = await Promise.all([
+    fetch(`${FMP_BASE_URL}/income-statement?${params}`),
+    fetch(`${FMP_BASE_URL}/balance-sheet-statement?${params}`),
+    fetch(`${FMP_BASE_URL}/cash-flow-statement?${params}`),
+    fetch(`${FMP_BASE_URL}/quote?symbol=${ticker}&apikey=${FMP_API_KEY}`)
+  ]);
+
+  if (!incomeRes.ok || !balanceRes.ok || !cashRes.ok || !quoteRes.ok) {
+    throw new Error("One or more FMP requests failed");
+  }
+
+  const [incomeJson, balanceJson, cashJson, quoteJson] = await Promise.all([
+    incomeRes.json(),
+    balanceRes.json(),
+    cashRes.json(),
+    quoteRes.json()
+  ]);
+
+  const income = Array.isArray(incomeJson) ? incomeJson[0] : incomeJson[0];
+  const bs = Array.isArray(balanceJson) ? balanceJson[0] : balanceJson[0];
+  const cf = Array.isArray(cashJson) ? cashJson[0] : cashJson[0];
+  const quote = Array.isArray(quoteJson) ? quoteJson[0] : quoteJson[0];
+
+  const raw = JSON.parse(JSON.stringify(AAPL_RAW_TEMPLATE));
+
+  raw.asOf = (income && (income.date || income.calendarYear)) || null;
+
+  // Market
+  raw.market.sharePrice = quote && (quote.price ?? quote.close ?? null);
+  raw.market.sharesOutstanding =
+    (income && (income.weightedAverageShsOut || income.weightedAverageShsOutDil)) || null;
+  raw.market.marketCap = quote && (quote.marketCap ?? null);
+  raw.market.enterpriseValue = null; // can add another endpoint later
+
+  // Income statement
+  if (income) {
+    raw.statements.incomeStatement.revenue =
+      income.revenue ?? income.Revenue ?? null;
+    raw.statements.incomeStatement.cogs =
+      income.costOfRevenue ?? income["Cost of Revenue"] ?? null;
+    raw.statements.incomeStatement.grossProfit =
+      income.grossProfit ?? income["Gross Profit"] ?? null;
+    raw.statements.incomeStatement.operatingExpenses =
+      income.operatingExpenses ?? income["Operating Expenses"] ?? null;
+    raw.statements.incomeStatement.operatingIncomeEBIT =
+      income.operatingIncome ?? income.ebit ?? income["Operating Income"] ?? null;
+    raw.statements.incomeStatement.ebitda =
+      income.ebitda ?? income["EBITDA"] ?? null;
+    raw.statements.incomeStatement.interestExpense =
+      income.interestExpense ?? income["Interest Expense"] ?? null;
+    raw.statements.incomeStatement.pretaxIncome =
+      income.incomeBeforeTax ?? income["Income Before Tax"] ?? null;
+    raw.statements.incomeStatement.netIncome =
+      income.netIncome ?? income["Net Income"] ?? null;
+  }
+
+  // Balance sheet
+  if (bs) {
+    raw.statements.balanceSheet.totalAssets =
+      bs.totalAssets ?? bs["Total Assets"] ?? null;
+    raw.statements.balanceSheet.totalCurrentAssets =
+      bs.totalCurrentAssets ?? bs["Total Current Assets"] ?? null;
+    raw.statements.balanceSheet.cashAndEquivalents =
+      bs.cashAndCashEquivalents ??
+      bs.cashAndShortTermInvestments ??
+      bs["Cash and cash equivalents"] ??
+      null;
+    raw.statements.balanceSheet.accountsReceivable =
+      bs.netReceivables ?? bs.accountsReceivable ?? null;
+    raw.statements.balanceSheet.inventory =
+      bs.inventory ?? bs["Inventory"] ?? null;
+    raw.statements.balanceSheet.otherCurrentAssets =
+      bs.otherCurrentAssets ?? null;
+    raw.statements.balanceSheet.totalLiabilities =
+      bs.totalLiabilities ?? bs["Total Liabilities"] ?? null;
+    raw.statements.balanceSheet.currentLiabilities =
+      bs.totalCurrentLiabilities ?? bs["Total Current Liabilities"] ?? null;
+    raw.statements.balanceSheet.accountsPayable =
+      bs.accountPayables ?? bs.accountsPayable ?? null;
+    raw.statements.balanceSheet.longTermDebt =
+      bs.longTermDebt ?? bs["Long Term Debt"] ?? null;
+    raw.statements.balanceSheet.shortTermDebt =
+      bs.shortTermDebt ?? bs.shortTermDebtTotal ?? null;
+    raw.statements.balanceSheet.shareholdersEquity =
+      bs.totalStockholdersEquity ?? bs.totalEquity ?? null;
+  }
+
+  // Cash flow
+  if (cf) {
+    raw.statements.cashFlow.operatingCashFlow =
+      cf.operatingCashFlow ??
+      cf.netCashProvidedByOperatingActivities ??
+      null;
+    raw.statements.cashFlow.capitalExpenditures =
+      cf.capitalExpenditure ?? cf.capex ?? null;
+
+    if (
+      raw.statements.cashFlow.operatingCashFlow != null &&
+      raw.statements.cashFlow.capitalExpenditures != null
+    ) {
+      raw.statements.cashFlow.freeCashFlow =
+        raw.statements.cashFlow.operatingCashFlow +
+        raw.statements.cashFlow.capitalExpenditures;
+    } else {
+      raw.statements.cashFlow.freeCashFlow = cf.freeCashFlow ?? null;
+    }
+
+    raw.statements.cashFlow.dividendsPaid =
+      cf.dividendsPaid ?? cf["Dividends Paid"] ?? null;
+    raw.statements.cashFlow.cashFlowFromFinancing =
+      cf.netCashUsedProvidedByFinancingActivities ??
+      cf.netCashProvidedByFinancingActivities ??
+      null;
+  }
+
+  // Tax rate (effective)
+  if (income && income.incomeTaxExpense && income.incomeBeforeTax) {
+    raw.statements.cashFlow.taxRate =
+      income.incomeTaxExpense / income.incomeBeforeTax;
+  }
+
+  return raw;
 }
 
 // =======================
@@ -2051,13 +2183,12 @@ async function initMetrics() {
   const ticker = "AAPL";
 
   try {
-    const res = await fetch(`./data/${ticker}.json`);
-    if (!res.ok) throw new Error("Failed to load JSON for " + ticker);
-
-    const json = await res.json();
-    window.AAPL_RAW = json; // override fallback
+    const fetchedRaw = await fetchAaplRawFromFmp(ticker);
+    window.AAPL_RAW = fetchedRaw;
+    console.log("Loaded live FMP data for", ticker, fetchedRaw);
   } catch (err) {
-    console.error("Error loading AAPL.json, using fallback AAPL_RAW:", err);
+    console.error("Error fetching from FMP, using fallback template AAPL_RAW:", err);
+    window.AAPL_RAW = JSON.parse(JSON.stringify(AAPL_RAW_TEMPLATE));
   }
 
   populateAllMetricPills();
