@@ -39,11 +39,19 @@
       margin-bottom: 1.5rem;
     }
 
-    .group-card {
-      border-radius: 0.75rem;
-      background: #0b1120;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      padding: 0.8rem 0.9rem 0.9rem;
+.group-card {
+  border-radius: 0.75rem;
+  background: #0a0f1a;
+  border: 1px solid rgba(30, 41, 59, 0.8); 
+  padding: 0.8rem 0.9rem 0.9rem;
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+.group-card:hover {
+  background: #111827;                
+  border-color: #38bdf8;               
+}
+
     }
 
     .group-title {
@@ -68,8 +76,8 @@
       padding: 0.25rem 0.55rem;
       background: #020617;
       border-radius: 999px;
-      border: 1px solid #cbd5f5;
-      color: #cbd5f5;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
       cursor: pointer;
       font-size: 0.8rem;
       white-space: nowrap;
@@ -108,7 +116,7 @@
 
     #currentEndpoint {
       font-weight: 500;
-      color: #ff3d00;
+      color: #e5e7eb;
     }
 
     #currentUrl {
