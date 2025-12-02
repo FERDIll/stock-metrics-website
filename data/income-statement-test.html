@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FMP Income Statement Test</title>
+  <title>FMP AAPL Test</title>
 
   <style>
     body {
@@ -14,6 +14,13 @@
 
     h1 {
       color: #38bdf8;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 1rem;
     }
 
     pre {
@@ -21,6 +28,7 @@
       padding: 20px;
       border-radius: 8px;
       overflow-x: auto;
+      max-height: 480px;
     }
 
     .btn {
@@ -30,46 +38,167 @@
       border-radius: 6px;
       color: #38bdf8;
       cursor: pointer;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
     }
 
     .btn:hover {
       background: #28415c;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .label {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .url-box {
+      background: #020617;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.75rem;
+      border: 1px solid #374151;
+      overflow-x: auto;
+      margin-bottom: 10px;
+      color: #9ca3af;
+    }
+
+    .status-ok {
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .status-error {
+      color: #f97373;
+      font-weight: 600;
     }
   </style>
 </head>
 
 <body>
 
-<h1>Income Statement Test (AAPL)</h1>
-<button class="btn" onclick="loadIncomeStatement()">Fetch Income Statement</button>
+<h1>FMP AAPL Test</h1>
+<p>
+  Quick dev page to test different FMP endpoints for <strong>AAPL</strong>.  
+  Click a button to see the URL and raw JSON (trimmed for large arrays).
+</p>
 
-<pre id="output">Click the button to load data...</pre>
+<div class="btn-row">
+  <button class="btn" onclick="runEndpoint('income')">Income statement</button>
+  <button class="btn" onclick="runEndpoint('balance')">Balance sheet</button>
+  <button class="btn" onclick="runEndpoint('cashflow')">Cash flow</button>
+  <button class="btn" onclick="runEndpoint('quote')">Quote</button>
+  <button class="btn" onclick="runEndpoint('key-metrics')">Key metrics</button>
+  <button class="btn" onclick="runEndpoint('ratios')">Ratios</button>
+</div>
+
+<div class="label">Request URL</div>
+<div id="urlBox" class="url-box">–</div>
+
+<div class="label">
+  Status: <span id="statusLabel">Idle</span>
+</div>
+
+<div class="label">JSON output</div>
+<pre id="output">Click a button to load data...</pre>
 
 <script>
-async function loadIncomeStatement() {
-  const url = "https://financialmodelingprep.com/stable/income-statement?symbol=AAPL&apikey=gfEPMOcj1ubmfbrlE3gwV34UJTzauVNp";
+  // Config – you can reuse the key you already used here
+  const API_KEY = "gfEPMOcj1ubmfbrlE3gwV34UJTzauVNp";
+  const BASE_URL = "https://financialmodelingprep.com/stable";
+  const SYMBOL = "AAPL";
 
+  const urlBox = document.getElementById("urlBox");
+  const statusLabel = document.getElementById("statusLabel");
   const output = document.getElementById("output");
-  output.textContent = "Loading...";
 
-  try {
-    const response = await fetch(url);
+  function buildUrl(kind) {
+    const baseParams = `symbol=${encodeURIComponent(SYMBOL)}&limit=1&apikey=${encodeURIComponent(API_KEY)}`;
 
-    if (!response.ok) {
-      output.textContent = "Error: " + response.status + " " + response.statusText;
+    switch (kind) {
+      case "income":
+        return `${BASE_URL}/income-statement?${baseParams}`;
+      case "balance":
+        return `${BASE_URL}/balance-sheet-statement?${baseParams}`;
+      case "cashflow":
+        return `${BASE_URL}/cash-flow-statement?${baseParams}`;
+      case "quote":
+        // quote uses symbol separately in their docs
+        return `${BASE_URL}/quote?symbol=${encodeURIComponent(SYMBOL)}&apikey=${encodeURIComponent(API_KEY)}`;
+      case "key-metrics":
+        return `${BASE_URL}/key-metrics?${baseParams}`;
+      case "ratios":
+        return `${BASE_URL}/ratios?${baseParams}`;
+      default:
+        throw new Error("Unknown endpoint kind: " + kind);
+    }
+  }
+
+  function setStatus(text, ok = false, error = false) {
+    statusLabel.textContent = text;
+    statusLabel.className = "";
+    if (ok) statusLabel.classList.add("status-ok");
+    if (error) statusLabel.classList.add("status-error");
+  }
+
+  async function runEndpoint(kind) {
+    let url;
+    try {
+      url = buildUrl(kind);
+    } catch (err) {
+      urlBox.textContent = err.message;
+      setStatus("Error building URL", false, true);
+      output.textContent = err.stack || String(err);
       return;
     }
 
-    const json = await response.json();
+    urlBox.textContent = url;
+    setStatus("Loading…");
+    output.textContent = "Loading...";
 
-    // Full dump of the returned JSON
-    output.textContent = JSON.stringify(json, null, 2);
+    try {
+      const response = await fetch(url);
 
-  } catch (err) {
-    output.textContent = "Fetch failed: " + err.message;
+      if (!response.ok) {
+        setStatus(`HTTP ${response.status} ${response.statusText}`, false, true);
+        const text = await response.text().catch(() => "");
+        output.textContent = text || "No error body.";
+        return;
+      }
+
+      const json = await response.json();
+
+      // For endpoints that return big arrays, just show the first few items
+      let display;
+      if (Array.isArray(json)) {
+        const maxItems = 3;
+        display = {
+          _note: `Array of length ${json.length}. Showing first ${Math.min(maxItems, json.length)} element(s).`,
+          items: json.slice(0, maxItems)
+        };
+      } else {
+        display = json;
+      }
+
+      setStatus("OK", true, false);
+      output.textContent = JSON.stringify(display, null, 2);
+    } catch (err) {
+      setStatus("Fetch failed", false, true);
+      output.textContent = String(err);
+    }
   }
-}
+
+  // If you want it to auto-run one endpoint on load, uncomment:
+  // runEndpoint("income");
 </script>
 </body>
 </html>
