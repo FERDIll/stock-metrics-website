@@ -1,1 +1,68 @@
-
+{
+  "asOf": "Apple Inc.",
+  "market": {
+    "sharePrice": null,
+    "sharesOutstanding": null,
+    "marketCap": null,
+    "enterpriseValue": null,
+    "historicalPrices": []
+  },
+  "statements": {
+    "incomeStatement": {
+      "revenue": 215639000000,
+      "cogs": 214137000000,
+      "grossProfit": 169148000000,
+      "operatingExpenses": null,
+      "depreciationAmort": null,
+      "operatingIncomeEBIT": 114301000000,
+      "ebitda": null,
+      "interestExpense": null,
+      "pretaxIncome": null,
+      "netIncome": 96995000000,
+      "netIncomeExNRI": null
+    },
+    "balanceSheet": {
+      "totalAssets": 364980000000,
+      "totalCurrentAssets": 152987000000,
+      "cashAndEquivalents": 29943000000,
+      "accountsReceivable": null,
+      "inventory": null,
+      "otherCurrentAssets": null,
+      "totalLiabilities": 308030000000,
+      "currentLiabilities": 176392000000,
+      "accountsPayable": null,
+      "longTermDebt": 85750000000,
+      "shortTermDebt": null,
+      "shareholdersEquity": 50672000000,
+      "investedCapital": null
+    },
+    "cashFlow": {
+      "operatingCashFlow": 110543000000,
+      "freeCashFlow": 121502000000,
+      "capitalExpenditures": 10959000000,
+      "ownerEarnings": null,
+      "dividendsPaid": 15025000000,
+      "cashFlowFromFinancing": null,
+      "taxRate": null
+    }
+  },
+  "optional": {
+    "quality": {
+      "retainedEarnings": null,
+      "workingCapital": null,
+      "tenYearProfitHistory": [],
+      "segmentRevenue": []
+    },
+    "multiYearFinancials": {
+      "revenue": [],
+      "ebitda": [],
+      "netIncome": [],
+      "freeCashFlow": [],
+      "bookValue": []
+    },
+    "financingDetail": {
+      "shareRepurchases": null,
+      "shareIssuances": null
+    }
+  }
+}
