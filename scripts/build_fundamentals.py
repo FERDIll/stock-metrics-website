@@ -1,12 +1,15 @@
 # scripts/build_fundamentals.py
 #
-# Minimal EDGAR → data/AAPL.json builder
-# - Fetches SEC "companyfacts" for AAPL
-# - Extracts a few key fundamentals
-# - Writes them in the JSON format your site already expects
+# EDGAR → data/<TICKER>.json builder
+# - Fetches SEC "companyfacts" for each ticker
+# - Extracts key fundamentals
+# - Writes them in the JSON format your site expects (AAPL_RAW-style)
 
 import json
 import os
+import time
+from typing import Any, Dict, List, Optional
+
 import requests
 
 # -----------------------------
@@ -23,27 +26,33 @@ CIK_MAP = {
 
 SEC_BASE = "https://data.sec.gov/api/xbrl/companyfacts"
 
-# IMPORTANT: replace with your email or some contact
+
 HEADERS = {
-    "User-Agent": "TransparentMetrics/0.1 (contact: your-email@example.com)"
+    "User-Agent": "TransparentMetrics/0.1 (contact: transparant.metrics@atomicmail.io)"
 }
+
+# Where to write JSON (repo root / data)
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+DATA_DIR = os.path.join(ROOT_DIR, "data")
 
 
 # -----------------------------
 # HELPERS
 # -----------------------------
 
-def fetch_company_facts(cik: str) -> dict:
+def fetch_company_facts(cik: str) -> Dict[str, Any]:
+    """Fetch SEC companyfacts JSON for a given CIK."""
     url = f"{SEC_BASE}/CIK{cik}.json"
+    print(f"[HTTP] GET {url}")
     resp = requests.get(url, headers=HEADERS, timeout=30)
     resp.raise_for_status()
     return resp.json()
 
 
-def pick_latest_annual_usd(facts: dict, concept: str):
+def pick_latest_annual_entry(facts: Dict[str, Any], concept: str) -> Optional[Dict[str, Any]]:
     """
-    Pick the latest annual 10-K FY value for a given us-gaap concept (USD units).
-    Returns None if not found.
+    Return the latest annual 10-K FY entry for a given us-gaap concept (USD units),
+    or None if not found.
     """
     try:
         entries = facts["us-gaap"][concept]["units"]["USD"]
@@ -58,17 +67,69 @@ def pick_latest_annual_usd(facts: dict, concept: str):
         return None
 
     annual.sort(key=lambda e: e.get("fy", 0), reverse=True)
-    return annual[0]["val"]
+    return annual[0]
 
 
-def build_raw_from_edgar(company_facts: dict) -> dict:
+def pick_latest_annual_usd(facts: Dict[str, Any], concept: str) -> Optional[float]:
+    """Convenience wrapper returning just the numeric value."""
+    entry = pick_latest_annual_entry(facts, concept)
+    if entry is None:
+        return None
+    return entry.get("val")
+
+
+def build_multi_year_series(
+    facts: Dict[str, Any],
+    concept: str,
+    limit_years: int = 10
+) -> List[Dict[str, Any]]:
+    """
+    Build a simple [{fy: 2024, value: ...}, ...] list for up to limit_years
+    using annual 10-K FY USD values for a given concept.
+    """
+    try:
+        entries = facts["us-gaap"][concept]["units"]["USD"]
+    except KeyError:
+        return []
+
+    annual = [
+        e for e in entries
+        if e.get("form") == "10-K"
+        and e.get("fp") == "FY"
+        and "val" in e
+        and "fy" in e
+    ]
+    if not annual:
+        return []
+
+    # sort newest -> oldest
+    annual.sort(key=lambda e: e.get("fy", 0), reverse=True)
+
+    out: List[Dict[str, Any]] = []
+    seen_years = set()
+
+    for e in annual:
+        fy = e["fy"]
+        if fy in seen_years:
+            continue
+        seen_years.add(fy)
+        out.append({"fy": fy, "value": e["val"]})
+        if len(out) >= limit_years:
+            break
+
+    # reverse to oldest -> newest for nicer reading
+    out.reverse()
+    return out
+
+
+def build_raw_from_edgar(company_facts: Dict[str, Any]) -> Dict[str, Any]:
     """
     Convert EDGAR companyfacts JSON into your simplified RAW structure.
-    Only fills a few key fields; the rest can stay null.
+    Only fills a set of key fields; the rest can stay null.
     """
     facts = company_facts.get("facts", {})
 
-    def latest(concept):
+    def latest(concept: str) -> Optional[float]:
         return pick_latest_annual_usd(facts, concept)
 
     # ---------- Income statement ----------
@@ -94,6 +155,13 @@ def build_raw_from_edgar(company_facts: dict) -> dict:
     current_assets = latest("AssetsCurrent")
     current_liabilities = latest("LiabilitiesCurrent")
 
+    # derived
+    working_capital = None
+    if current_assets is not None and current_liabilities is not None:
+        working_capital = current_assets - current_liabilities
+
+    retained_earnings = latest("RetainedEarningsAccumulatedDeficit")
+
     # ---------- Cash flow ----------
     ocf = (
         latest("NetCashProvidedByUsedInOperatingActivities")
@@ -111,9 +179,34 @@ def build_raw_from_edgar(company_facts: dict) -> dict:
 
     dividends = latest("PaymentsOfDividends") or latest("PaymentsOfDividendsCommonStock")
 
+    # ---------- Multi-year histories ----------
+    ten_year_profit_history = build_multi_year_series(
+        facts, "NetIncomeLoss", limit_years=10
+    )
+    revenue_history = build_multi_year_series(
+        facts, "Revenues", limit_years=10
+    ) or build_multi_year_series(
+        facts, "SalesRevenueNet", limit_years=10
+    )
+    fcf_history = []  # could be built from OCF & Capex per year later
+
+    # ---------- asOf: try to infer last FY end date ----------
+    as_of = None
+    ref_entry = (
+        pick_latest_annual_entry(facts, "Assets")
+        or pick_latest_annual_entry(facts, "Revenues")
+        or pick_latest_annual_entry(facts, "NetIncomeLoss")
+    )
+    if ref_entry is not None:
+        # 'end' is usually like '2024-09-28'
+        as_of = ref_entry.get("end") or str(ref_entry.get("fy"))
+    else:
+        # fallback to entityName if nothing else
+        as_of = company_facts.get("entityName", "")
+
     # ---------- Build RAW object ----------
-    raw = {
-        "asOf": company_facts.get("entityName", ""),
+    raw: Dict[str, Any] = {
+        "asOf": as_of,
         "market": {
             # you can later add price etc from another source; for now null
             "sharePrice": None,
@@ -163,16 +256,16 @@ def build_raw_from_edgar(company_facts: dict) -> dict:
         },
         "optional": {
             "quality": {
-                "retainedEarnings": None,
-                "workingCapital": None,
-                "tenYearProfitHistory": [],
+                "retainedEarnings": retained_earnings,
+                "workingCapital": working_capital,
+                "tenYearProfitHistory": ten_year_profit_history,
                 "segmentRevenue": []
             },
             "multiYearFinancials": {
-                "revenue": [],
+                "revenue": revenue_history,
                 "ebitda": [],
-                "netIncome": [],
-                "freeCashFlow": [],
+                "netIncome": ten_year_profit_history,
+                "freeCashFlow": fcf_history,
                 "bookValue": []
             },
             "financingDetail": {
@@ -185,8 +278,8 @@ def build_raw_from_edgar(company_facts: dict) -> dict:
     return raw
 
 
-def main():
-    os.makedirs("data", exist_ok=True)
+def main() -> None:
+    os.makedirs(DATA_DIR, exist_ok=True)
 
     for ticker in TICKERS:
         cik = CIK_MAP.get(ticker)
@@ -194,15 +287,23 @@ def main():
             print(f"[WARN] No CIK mapping for {ticker}, skipping.")
             continue
 
-        print(f"[INFO] Fetching companyfacts for {ticker} (CIK {cik})")
-        facts = fetch_company_facts(cik)
-        raw = build_raw_from_edgar(facts)
+        try:
+            print(f"[INFO] Fetching companyfacts for {ticker} (CIK {cik})")
+            facts = fetch_company_facts(cik)
+            raw = build_raw_from_edgar(facts)
 
-        out_path = os.path.join("data", f"{ticker}.json")
-        with open(out_path, "w") as f:
-            json.dump(raw, f, indent=2)
+            out_path = os.path.join(DATA_DIR, f"{ticker}.json")
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(raw, f, indent=2)
 
-        print(f"[OK] Wrote {out_path}")
+            print(f"[OK] Wrote {out_path}")
+        except requests.HTTPError as e:
+            print(f"[ERROR] HTTP error for {ticker}: {e}")
+        except Exception as e:
+            print(f"[ERROR] Unexpected error for {ticker}: {e}")
+
+        # Be nice to SEC; small pause between requests
+        time.sleep(0.25)
 
 
 if __name__ == "__main__":
